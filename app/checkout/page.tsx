@@ -23,7 +23,6 @@ import toast from "react-hot-toast";
 
 export default function CheckoutPage() {
   const cartContext = useContext(CartContext);
-
   const router = useRouter();
 
   const [name, setName] = useState("");
@@ -33,8 +32,13 @@ export default function CheckoutPage() {
   const [city, setCity] = useState("");
   const [postalCode, setPostalCode] = useState("");
 
-  const [paymentMethod, setPaymentMethod] =
-    useState("Easypaisa");
+  /*
+   * 50% = Order Reservation
+   * 100% = Full Prepayment
+   */
+  const [paymentPlan, setPaymentPlan] = useState<
+    "50%" | "100%"
+  >("50%");
 
   const [transactionId, setTransactionId] =
     useState("");
@@ -45,7 +49,21 @@ export default function CheckoutPage() {
   const [loading, setLoading] =
     useState(false);
 
-  // Show a safe message if CartProvider is unavailable
+  /*
+   * Delivery benefit
+   *
+   * Your product prices already include
+   * the Rs. 250 delivery component.
+   *
+   * 50% Advance:
+   * Total remains unchanged.
+   *
+   * 100% Advance:
+   * Rs. 250 delivery benefit is automatically
+   * deducted from the displayed total.
+   */
+  const DELIVERY_BENEFIT = 250;
+
   if (!cartContext) {
     return (
       <>
@@ -53,7 +71,6 @@ export default function CheckoutPage() {
 
         <main className="flex min-h-screen items-center justify-center bg-black px-4 text-white">
           <div className="w-full max-w-lg rounded-3xl border border-red-500/30 bg-gray-900 p-10 text-center">
-
             <h1 className="text-3xl font-black text-red-400">
               Cart Not Available
             </h1>
@@ -69,31 +86,82 @@ export default function CheckoutPage() {
             >
               Go to Cart
             </button>
-
           </div>
         </main>
       </>
     );
   }
 
-  // Cart is guaranteed to exist below this point
   const cart = cartContext;
 
-  const subtotal = cart.cartItems.reduce(
+  /*
+   * Product prices are already stored with
+   * the Rs. 250 delivery component included.
+   */
+  const standardTotal = cart.cartItems.reduce(
     (total, item) =>
       total +
-      item.product.price *
+      Number(item.product.price) *
         item.quantity,
     0
   );
 
-  const delivery =
+  /*
+   * 50% Advance:
+   * Customer pays half of the standard price now.
+   */
+  const advanceAmount50 =
+    standardTotal * 0.5;
+
+  /*
+   * 50% remaining balance.
+   */
+  const remainingAmount50 =
+    standardTotal - advanceAmount50;
+
+  /*
+   * 100% Advance:
+   * Remove Rs. 250 delivery benefit.
+   */
+  const prepaidTotal =
     cart.cartItems.length > 0
-      ? 250
+      ? Math.max(
+          standardTotal - DELIVERY_BENEFIT,
+          0
+        )
       : 0;
 
-  const totalPrice =
-    subtotal + delivery;
+  /*
+   * Amount shown according to selected plan.
+   */
+  const payableTotal =
+    paymentPlan === "100%"
+      ? prepaidTotal
+      : standardTotal;
+
+  /*
+   * Amount customer pays immediately.
+   */
+  const amountPayableNow =
+    paymentPlan === "100%"
+      ? prepaidTotal
+      : advanceAmount50;
+
+  /*
+   * Remaining amount after advance payment.
+   */
+  const amountPayableLater =
+    paymentPlan === "100%"
+      ? 0
+      : remainingAmount50;
+
+  /*
+   * Delivery display.
+   */
+  const deliveryText =
+    paymentPlan === "100%"
+      ? "Complimentary"
+      : "Applicable on delivery";
 
   async function placeOrder() {
     if (
@@ -121,35 +189,29 @@ export default function CheckoutPage() {
       return;
     }
 
-    if (
-      paymentMethod !==
-      "Cash on Delivery"
-    ) {
-      if (
-        !transactionId.trim()
-      ) {
-        toast.error(
-          "Please enter the Transaction ID."
-        );
+    /*
+     * Both payment plans require
+     * advance payment.
+     */
+    if (!transactionId.trim()) {
+      toast.error(
+        "Please enter the Transaction ID."
+      );
 
-        return;
-      }
+      return;
+    }
 
-      if (
-        !paymentScreenshot
-      ) {
-        toast.error(
-          "Please upload the payment screenshot."
-        );
+    if (!paymentScreenshot) {
+      toast.error(
+        "Please upload the payment screenshot."
+      );
 
-        return;
-      }
+      return;
     }
 
     try {
       setLoading(true);
 
-      // Create the order in Firebase
       const orderReference =
         await addDoc(
           collection(
@@ -180,32 +242,62 @@ export default function CheckoutPage() {
             items:
               cart.cartItems,
 
-            subtotal,
+            /*
+             * Original standard price.
+             */
+            subtotal:
+              standardTotal,
 
-            delivery,
+            /*
+             * Rs. 250 benefit is recorded
+             * for full prepayment.
+             */
+            deliveryBenefit:
+              paymentPlan === "100%"
+                ? DELIVERY_BENEFIT
+                : 0,
 
+            delivery:
+              paymentPlan === "100%"
+                ? 0
+                : DELIVERY_BENEFIT,
+
+            /*
+             * Final customer order value.
+             */
             total:
-              totalPrice,
+              payableTotal,
 
-            paymentMethod,
+            /*
+             * Payment plan.
+             */
+            paymentPlan,
+
+            /*
+             * Amount received now.
+             */
+            advanceAmount:
+              amountPayableNow,
+
+            /*
+             * Remaining amount to collect
+             * on delivery.
+             */
+            remainingAmount:
+              amountPayableLater,
+
+            paymentMethod:
+              paymentPlan === "100%"
+                ? "100% Advance Payment"
+                : "50% Advance Payment",
 
             transactionId:
-              paymentMethod ===
-              "Cash on Delivery"
-                ? ""
-                : transactionId.trim(),
+              transactionId.trim(),
 
-            paymentScreenshot:
-              paymentMethod ===
-              "Cash on Delivery"
-                ? ""
-                : paymentScreenshot,
+            paymentScreenshot,
 
             paymentStatus:
-              paymentMethod ===
-              "Cash on Delivery"
-                ? "COD"
-                : "Waiting Verification",
+              "Waiting Verification",
 
             status:
               "Pending",
@@ -215,7 +307,9 @@ export default function CheckoutPage() {
           }
         );
 
-      // Update product stock
+      /*
+       * Update stock.
+       */
       for (
         const item of
         cart.cartItems
@@ -244,15 +338,15 @@ export default function CheckoutPage() {
         }
       }
 
-      // Empty cart
+      /*
+       * Empty cart.
+       */
       cart.setCartItems([]);
 
-      // Show success message
       toast.success(
-        "Order placed successfully!"
+        "Order submitted successfully!"
       );
 
-      // Open the order success page
       router.push(
         `/order-success?orderId=${orderReference.id}`
       );
@@ -275,10 +369,11 @@ export default function CheckoutPage() {
       <Navbar />
 
       <main className="min-h-screen bg-black py-12 text-white sm:py-16">
-
         <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-2">
 
-          {/* CUSTOMER DETAILS */}
+          {/* =========================================
+              CUSTOMER DETAILS
+          ========================================= */}
 
           <section className="rounded-3xl border border-yellow-400/20 bg-gray-900 p-6 sm:p-8">
 
@@ -292,10 +387,13 @@ export default function CheckoutPage() {
 
             <p className="mt-3 text-gray-400">
               Enter your delivery details
-              and complete your order.
+              and select your preferred
+              payment plan.
             </p>
 
             <div className="mt-8 space-y-5">
+
+              {/* NAME */}
 
               <input
                 type="text"
@@ -309,6 +407,8 @@ export default function CheckoutPage() {
                 className="w-full rounded-xl border border-gray-700 bg-black p-4 text-white outline-none focus:border-yellow-400"
               />
 
+              {/* EMAIL */}
+
               <input
                 type="email"
                 placeholder="Email Address"
@@ -320,6 +420,8 @@ export default function CheckoutPage() {
                 }
                 className="w-full rounded-xl border border-gray-700 bg-black p-4 text-white outline-none focus:border-yellow-400"
               />
+
+              {/* PHONE */}
 
               <input
                 type="tel"
@@ -333,6 +435,8 @@ export default function CheckoutPage() {
                 className="w-full rounded-xl border border-gray-700 bg-black p-4 text-white outline-none focus:border-yellow-400"
               />
 
+              {/* ADDRESS */}
+
               <input
                 type="text"
                 placeholder="Complete Shipping Address"
@@ -344,6 +448,8 @@ export default function CheckoutPage() {
                 }
                 className="w-full rounded-xl border border-gray-700 bg-black p-4 text-white outline-none focus:border-yellow-400"
               />
+
+              {/* CITY + POSTAL */}
 
               <div className="grid gap-5 sm:grid-cols-2">
 
@@ -373,175 +479,323 @@ export default function CheckoutPage() {
 
               </div>
 
-              {/* PAYMENT METHOD */}
+              {/* =========================================
+                  PAYMENT PLAN
+              ========================================= */}
 
               <div className="pt-5">
 
                 <h2 className="text-2xl font-black text-yellow-400">
-                  Payment Method
+                  Choose Your Payment Plan
                 </h2>
 
-                <div className="mt-5 grid gap-3">
+                <p className="mt-2 text-sm text-gray-400">
+                  An advance payment is required
+                  to confirm your order.
+                </p>
 
-                  {[
-                    "Easypaisa",
-                    "JazzCash",
-                    "Bank Transfer",
-                    "Cash on Delivery",
-                  ].map(
-                    (method) => (
-                      <label
-                        key={method}
-                        className={`cursor-pointer rounded-xl border p-4 transition ${
-                          paymentMethod ===
-                          method
-                            ? "border-yellow-400 bg-yellow-400/10"
-                            : "border-gray-700 bg-black"
-                        }`}
-                      >
+                <div className="mt-5 grid gap-4">
 
-                        <input
-                          type="radio"
-                          name="payment"
-                          checked={
-                            paymentMethod ===
-                            method
-                          }
-                          onChange={() =>
-                            setPaymentMethod(
-                              method
-                            )
-                          }
-                        />
+                  {/* 50% PLAN */}
 
-                        <span className="ml-3 font-bold">
+                  <label
+                    className={`cursor-pointer rounded-2xl border p-5 transition ${
+                      paymentPlan === "50%"
+                        ? "border-yellow-400 bg-yellow-400/10"
+                        : "border-gray-700 bg-black hover:border-gray-500"
+                    }`}
+                  >
 
-                          {method ===
-                          "Cash on Delivery"
-                            ? "🚚 Cash on Delivery (COD)"
-                            : method}
+                    <div className="flex items-start gap-4">
 
-                        </span>
+                      <input
+                        type="radio"
+                        name="paymentPlan"
+                        checked={
+                          paymentPlan ===
+                          "50%"
+                        }
+                        onChange={() =>
+                          setPaymentPlan(
+                            "50%"
+                          )
+                        }
+                        className="mt-1 h-5 w-5 accent-yellow-400"
+                      />
 
-                      </label>
-                    )
-                  )}
+                      <div className="flex-1">
+
+                        <div className="flex flex-col justify-between gap-2 sm:flex-row">
+
+                          <h3 className="text-lg font-black">
+                            50% Advance
+                            <span className="ml-2 text-yellow-400">
+                              — Order Reservation
+                            </span>
+                          </h3>
+
+                          <span className="font-black text-yellow-400">
+                            Rs.{" "}
+                            {standardTotal.toLocaleString()}
+                          </span>
+
+                        </div>
+
+                        <p className="mt-3 text-sm leading-6 text-gray-400">
+                          Secure your order with
+                          a 50% advance payment.
+                          The remaining balance
+                          is payable upon delivery,
+                          with standard delivery
+                          charges applicable.
+                        </p>
+
+                        <div className="mt-4 grid gap-2 text-sm sm:grid-cols-2">
+
+                          <div className="rounded-lg bg-gray-900 p-3">
+                            <span className="text-gray-500">
+                              Pay Now
+                            </span>
+
+                            <div className="mt-1 font-black text-white">
+                              Rs.{" "}
+                              {advanceAmount50.toLocaleString()}
+                            </div>
+                          </div>
+
+                          <div className="rounded-lg bg-gray-900 p-3">
+                            <span className="text-gray-500">
+                              Pay on Delivery
+                            </span>
+
+                            <div className="mt-1 font-black text-white">
+                              Rs.{" "}
+                              {remainingAmount50.toLocaleString()}
+                            </div>
+                          </div>
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  </label>
+
+                  {/* 100% PLAN */}
+
+                  <label
+                    className={`cursor-pointer rounded-2xl border p-5 transition ${
+                      paymentPlan === "100%"
+                        ? "border-green-400 bg-green-400/10"
+                        : "border-gray-700 bg-black hover:border-gray-500"
+                    }`}
+                  >
+
+                    <div className="flex items-start gap-4">
+
+                      <input
+                        type="radio"
+                        name="paymentPlan"
+                        checked={
+                          paymentPlan ===
+                          "100%"
+                        }
+                        onChange={() =>
+                          setPaymentPlan(
+                            "100%"
+                          )
+                        }
+                        className="mt-1 h-5 w-5 accent-green-400"
+                      />
+
+                      <div className="flex-1">
+
+                        <div className="flex flex-col justify-between gap-2 sm:flex-row">
+
+                          <h3 className="text-lg font-black">
+                            100% Advance
+                            <span className="ml-2 text-green-400">
+                              — Complimentary Delivery
+                            </span>
+                          </h3>
+
+                          <div className="text-right">
+
+                            <div className="text-sm text-gray-500 line-through">
+                              Rs.{" "}
+                              {standardTotal.toLocaleString()}
+                            </div>
+
+                            <div className="font-black text-green-400">
+                              Rs.{" "}
+                              {prepaidTotal.toLocaleString()}
+                            </div>
+
+                          </div>
+
+                        </div>
+
+                        <p className="mt-3 text-sm leading-6 text-gray-400">
+                          Complete your payment
+                          in advance and receive
+                          complimentary delivery,
+                          equivalent to a
+                          Rs. 250 delivery benefit.
+                        </p>
+
+                        <div className="mt-4 rounded-lg border border-green-400/20 bg-green-400/5 p-3">
+
+                          <div className="flex justify-between text-sm">
+
+                            <span className="text-gray-400">
+                              Delivery Benefit
+                            </span>
+
+                            <span className="font-bold text-green-400">
+                              − Rs. 250
+                            </span>
+
+                          </div>
+
+                          <div className="mt-2 flex justify-between text-sm">
+
+                            <span className="text-gray-400">
+                              Delivery
+                            </span>
+
+                            <span className="font-bold text-green-400">
+                              FREE
+                            </span>
+
+                          </div>
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  </label>
 
                 </div>
 
               </div>
 
-              {/* ONLINE PAYMENT */}
+              {/* =========================================
+                  PAYMENT ACCOUNT
+              ========================================= */}
 
-              {paymentMethod !==
-                "Cash on Delivery" && (
+              <div className="space-y-5">
 
-                <div className="space-y-5">
+                <div className="rounded-2xl border border-yellow-400/30 bg-black p-5">
 
-                  <div className="rounded-2xl border border-yellow-400/30 bg-black p-5">
+                  <h3 className="font-black text-yellow-400">
+                    Payment Details
+                  </h3>
 
-                    <h3 className="font-black text-yellow-400">
-                      Send Payment To
-                    </h3>
+                  <p className="mt-3">
+                    Account Title:{" "}
+                    <strong>
+                      SmartCart
+                    </strong>
+                  </p>
 
-                    <p className="mt-3">
-                      Account Title:{" "}
+                  <p className="mt-2">
+                    Account Number:{" "}
+                    <strong>
+                      03XXXXXXXXX
+                    </strong>
+                  </p>
 
-                      <strong>
-                        SmartCart
-                      </strong>
-                    </p>
+                  <p className="mt-3 text-sm text-gray-500">
+                    Replace this number
+                    with your real payment
+                    account details.
+                  </p>
 
-                    <p className="mt-2">
-                      Account Number:{" "}
+                </div>
 
-                      <strong>
-                        03XXXXXXXXX
-                      </strong>
-                    </p>
+                {/* TRANSACTION ID */}
 
-                    <p className="mt-3 text-sm text-gray-500">
-                      Replace this number with
-                      your real payment number.
-                    </p>
+                <input
+                  type="text"
+                  placeholder="Transaction ID"
+                  value={
+                    transactionId
+                  }
+                  onChange={(event) =>
+                    setTransactionId(
+                      event.target.value
+                    )
+                  }
+                  className="w-full rounded-xl border border-gray-700 bg-black p-4 text-white outline-none focus:border-yellow-400"
+                />
 
-                  </div>
+                {/* SCREENSHOT */}
 
-                  <input
-                    type="text"
-                    placeholder="Transaction ID"
-                    value={
-                      transactionId
-                    }
-                    onChange={(
-                      event
-                    ) =>
-                      setTransactionId(
-                        event.target.value
-                      )
-                    }
-                    className="w-full rounded-xl border border-gray-700 bg-black p-4 text-white outline-none focus:border-yellow-400"
-                  />
+                <CldUploadWidget
+                  uploadPreset="smartcart_uploads"
+                  onSuccess={(
+                    result: any
+                  ) => {
 
-                  <CldUploadWidget
-                    uploadPreset="smartcart_uploads"
-                    onSuccess={(
-                      result: any
-                    ) => {
-                      const uploadedUrl =
-                        result?.info
-                          ?.secure_url;
+                    const uploadedUrl =
+                      result?.info
+                        ?.secure_url;
 
-                      if (
+                    if (
+                      uploadedUrl
+                    ) {
+
+                      setPaymentScreenshot(
                         uploadedUrl
-                      ) {
-                        setPaymentScreenshot(
-                          uploadedUrl
-                        );
+                      );
 
-                        toast.success(
-                          "Payment screenshot uploaded!"
-                        );
+                      toast.success(
+                        "Payment screenshot uploaded!"
+                      );
+
+                    }
+
+                  }}
+                >
+
+                  {({
+                    open,
+                  }) => (
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        open()
                       }
-                    }}
-                  >
-
-                    {({
-                      open,
-                    }) => (
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          open()
-                        }
-                        className="w-full rounded-xl bg-blue-600 py-4 font-black text-white transition hover:bg-blue-500"
-                      >
-                        📷 Upload Payment Screenshot
-                      </button>
-
-                    )}
-
-                  </CldUploadWidget>
-
-                  {paymentScreenshot && (
-
-                    <div className="rounded-xl border border-green-500/30 bg-green-500/10 p-4 font-bold text-green-400">
-
-                      ✅ Screenshot uploaded successfully
-
-                    </div>
+                      className="w-full rounded-xl bg-blue-600 py-4 font-black text-white transition hover:bg-blue-500"
+                    >
+                      📷 Upload Payment Screenshot
+                    </button>
 
                   )}
 
-                </div>
-              )}
+                </CldUploadWidget>
+
+                {paymentScreenshot && (
+
+                  <div className="rounded-xl border border-green-500/30 bg-green-500/10 p-4 font-bold text-green-400">
+                    ✅ Payment screenshot uploaded successfully
+                  </div>
+
+                )}
+
+              </div>
 
             </div>
 
           </section>
 
-          {/* ORDER SUMMARY */}
+          {/* =========================================
+              ORDER SUMMARY
+          ========================================= */}
 
           <aside className="h-fit rounded-3xl border border-yellow-400/20 bg-gray-900 p-6 lg:sticky lg:top-8 sm:p-8">
 
@@ -581,39 +835,34 @@ export default function CheckoutPage() {
                       <div>
 
                         <p className="font-bold">
-
                           {
                             item.product
                               .name
                           }
-
                         </p>
 
                         <p className="mt-1 text-sm text-gray-500">
-
                           Quantity:{" "}
-
                           {
                             item.quantity
                           }
-
                         </p>
 
                       </div>
 
                       <p className="font-bold text-yellow-400">
-
                         Rs.{" "}
-
                         {(
-                          item.product
-                            .price *
+                          Number(
+                            item.product
+                              .price
+                          ) *
                           item.quantity
                         ).toLocaleString()}
-
                       </p>
 
                     </div>
+
                   )
                 )}
 
@@ -621,23 +870,41 @@ export default function CheckoutPage() {
 
             )}
 
+            {/* =========================================
+                PRICE CALCULATION
+            ========================================= */}
+
             <div className="mt-8 space-y-4">
 
               <div className="flex justify-between">
 
                 <span className="text-gray-400">
-                  Subtotal
+                  Standard Order Value
                 </span>
 
                 <span>
-
                   Rs.{" "}
-
-                  {subtotal.toLocaleString()}
-
+                  {standardTotal.toLocaleString()}
                 </span>
 
               </div>
+
+              {paymentPlan ===
+                "100%" && (
+
+                <div className="flex justify-between">
+
+                  <span className="text-green-400">
+                    Prepaid Delivery Benefit
+                  </span>
+
+                  <span className="font-bold text-green-400">
+                    − Rs. 250
+                  </span>
+
+                </div>
+
+              )}
 
               <div className="flex justify-between">
 
@@ -645,12 +912,15 @@ export default function CheckoutPage() {
                   Delivery
                 </span>
 
-                <span>
-
-                  Rs.{" "}
-
-                  {delivery.toLocaleString()}
-
+                <span
+                  className={
+                    paymentPlan ===
+                    "100%"
+                      ? "font-bold text-green-400"
+                      : "text-white"
+                  }
+                >
+                  {deliveryText}
                 </span>
 
               </div>
@@ -664,18 +934,54 @@ export default function CheckoutPage() {
                   </span>
 
                   <span>
-
                     Rs.{" "}
-
-                    {totalPrice.toLocaleString()}
-
+                    {payableTotal.toLocaleString()}
                   </span>
 
                 </div>
 
               </div>
 
+              <div className="rounded-xl border border-yellow-400/20 bg-yellow-400/5 p-4">
+
+                <div className="flex justify-between">
+
+                  <span className="text-gray-400">
+                    Pay Now
+                  </span>
+
+                  <span className="font-black text-yellow-400">
+                    Rs.{" "}
+                    {amountPayableNow.toLocaleString()}
+                  </span>
+
+                </div>
+
+                {amountPayableLater >
+                  0 && (
+
+                  <div className="mt-2 flex justify-between">
+
+                    <span className="text-gray-400">
+                      Remaining on Delivery
+                    </span>
+
+                    <span className="font-bold">
+                      Rs.{" "}
+                      {amountPayableLater.toLocaleString()}
+                    </span>
+
+                  </div>
+
+                )}
+
+              </div>
+
             </div>
+
+            {/* =========================================
+                PLACE ORDER
+            ========================================= */}
 
             <button
               type="button"
@@ -691,15 +997,28 @@ export default function CheckoutPage() {
             >
 
               {loading
-                ? "Placing Order..."
-                : "✅ Place Order"}
+                ? "Submitting Order..."
+                : paymentPlan ===
+                  "100%"
+                ? "✅ Pay Rs. " +
+                  payableTotal.toLocaleString() +
+                  " & Place Order"
+                : "✅ Pay Rs. " +
+                  amountPayableNow.toLocaleString() +
+                  " & Reserve Order"}
 
             </button>
+
+            <p className="mt-4 text-center text-xs leading-5 text-gray-500">
+              By placing this order,
+              you confirm that the
+              payment information
+              submitted is accurate.
+            </p>
 
           </aside>
 
         </div>
-
       </main>
     </>
   );
