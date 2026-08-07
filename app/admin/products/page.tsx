@@ -69,9 +69,9 @@ export default function ProductsPage() {
 
             <div>
 
-              <h1 className="text-5xl font-bold text-yellow-400">
-                Manage Products
-              </h1>
+              <h1 className="text-5xl font-bold text-red-500">
+  THIS IS THE NEW PRODUCTS PAGE 🚀
+</h1>
 
               <p className="text-gray-400 mt-2">
                 {filteredProducts.length} Products
