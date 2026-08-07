@@ -157,7 +157,7 @@ export default function FeaturedProducts() {
                         y: -6,
                       }}
                       className="
-                        group flex h-full min-h-[355px]
+                        group flex h-full min-h-88.75
                         flex-col overflow-hidden
                         rounded-xl border border-white/10
                         bg-zinc-900
@@ -165,9 +165,9 @@ export default function FeaturedProducts() {
                         transition-all
                         hover:border-yellow-500/40
                         hover:shadow-yellow-500/20
-                        sm:min-h-[470px]
+                        sm:min-h-117.5
                         sm:rounded-2xl
-                        lg:min-h-[610px]
+                        lg:min-h-152.5
                       "
                     >
                       <Link href={`/products/${product.id}`}>
@@ -249,15 +249,15 @@ export default function FeaturedProducts() {
                           <h3
                             className="
                               line-clamp-2
-                              min-h-[32px]
+                              min-h-8
                               text-[11px] font-bold
                               leading-4 text-white
                               transition
                               hover:text-yellow-400
-                              sm:min-h-[48px]
+                              sm:min-h-12
                               sm:text-sm
                               sm:leading-5
-                              lg:min-h-[56px]
+                              lg:min-h-14
                               lg:text-lg
                             "
                           >

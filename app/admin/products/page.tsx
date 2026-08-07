@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Navbar from "../../components/Navbar";
 import { db } from "../../lib/firebase";
 
@@ -12,30 +13,49 @@ import {
 } from "firebase/firestore";
 
 export default function ProductsPage() {
+  const router = useRouter();
+
   const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     loadProducts();
   }, []);
 
   async function loadProducts() {
-    const snapshot = await getDocs(collection(db, "products"));
+    try {
+      const snapshot = await getDocs(collection(db, "products"));
 
-    setProducts(
-      snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }))
-    );
+      const data = snapshot.docs.map((item) => ({
+        id: item.id,
+        ...item.data(),
+      }));
+
+      setProducts(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function removeProduct(id: string) {
     if (!confirm("Delete this product?")) return;
 
-    await deleteDoc(doc(db, "products", id));
-
-    loadProducts();
+    try {
+      await deleteDoc(doc(db, "products", id));
+      loadProducts();
+    } catch (error) {
+      console.error(error);
+    }
   }
+
+  const filteredProducts = products.filter((product) =>
+    (product.name || "")
+      .toLowerCase()
+      .includes(search.toLowerCase())
+  );
 
   return (
     <>
@@ -45,48 +65,219 @@ export default function ProductsPage() {
 
         <div className="max-w-7xl mx-auto px-6">
 
-          <h1 className="text-5xl font-bold text-yellow-400 mb-10">
-            Products
-          </h1>
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-10">
 
-          <div className="space-y-5">
+            <div>
 
-            {products.map((product) => (
+              <h1 className="text-5xl font-bold text-yellow-400">
+                Manage Products
+              </h1>
 
-              <div
-                key={product.id}
-                className="bg-gray-900 rounded-xl p-6 flex justify-between items-center"
-              >
-                <div>
-                  <h2 className="text-2xl font-bold">
-                    {product.name}
-                  </h2>
+              <p className="text-gray-400 mt-2">
+                {filteredProducts.length} Products
+              </p>
 
-                  <p className="text-yellow-400">
-                    Rs. {product.price}
-                  </p>
+            </div>
 
-                  <p className="text-gray-400">
-                    {product.category}
-                  </p>
-                </div>
-
-                <button
-                  onClick={() => removeProduct(product.id)}
-                  className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-xl"
-                >
-                  Delete
-                </button>
-
-              </div>
-
-            ))}
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="bg-gray-900 border border-gray-700 rounded-xl px-5 py-3 w-full md:w-80 outline-none focus:border-yellow-400"
+            />
 
           </div>
+
+          {loading ? (
+
+            <div className="text-center text-yellow-400 text-xl py-20">
+              Loading Products...
+            </div>
+
+          ) : (
+
+            <div className="overflow-x-auto rounded-2xl border border-gray-800">
+
+              <table className="min-w-full">
+
+                <thead className="bg-yellow-500 text-black">
+
+                  <tr>
+
+                    <th className="p-4 text-left">Image</th>
+
+                    <th className="p-4 text-left">Product</th>
+
+                    <th className="p-4 text-left">Description</th>
+
+                    <th className="p-4 text-left">Price</th>
+
+                    <th className="p-4 text-left">Category</th>
+
+                    <th className="p-4 text-left">Stock</th>
+
+                    <th className="p-4 text-left">Featured</th>
+
+                    <th className="p-4 text-left">Flash Sale</th>
+
+                    <th className="p-4 text-left">Today's Deal</th>
+
+                    <th className="p-4 text-left">Best Seller</th>
+
+                    <th className="p-4 text-left">Actions</th>
+
+                  </tr>
+
+                </thead>
+
+                <tbody>
+
+                  {filteredProducts.map((product) => (
+
+                    <tr
+                      key={product.id}
+                      className="border-b border-gray-800 hover:bg-gray-900 transition"
+                    >
+
+                      <td className="p-4">
+
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-20 h-20 rounded-lg object-cover"
+                        />
+
+                      </td>
+
+                      <td className="p-4 font-bold">
+                        {product.name}
+                      </td>
+                      <td className="p-4 max-w-sm">
+
+                        <div className="line-clamp-3 text-gray-300">
+
+                          {product.description || "No Description"}
+
+                        </div>
+
+                      </td>
+
+                      <td className="p-4 text-yellow-400 font-bold">
+
+                        Rs. {product.price}
+
+                      </td>
+
+                      <td className="p-4">
+
+                        {product.category}
+
+                      </td>
+
+                      <td className="p-4">
+
+                        {product.stock ?? 0}
+
+                      </td>
+
+                      <td className="p-4">
+
+                        {product.featured ? (
+                          <span className="text-green-400 font-semibold">
+                            ✅ Yes
+                          </span>
+                        ) : (
+                          <span className="text-red-400">
+                            ❌ No
+                          </span>
+                        )}
+
+                      </td>
+
+                      <td className="p-4">
+
+                        {product.flashSale ? (
+                          <span className="text-green-400 font-semibold">
+                            ✅ Yes
+                          </span>
+                        ) : (
+                          <span className="text-red-400">
+                            ❌ No
+                          </span>
+                        )}
+
+                      </td>
+
+                      <td className="p-4">
+
+                        {product.todaysDeal ? (
+                          <span className="text-green-400 font-semibold">
+                            ✅ Yes
+                          </span>
+                        ) : (
+                          <span className="text-red-400">
+                            ❌ No
+                          </span>
+                        )}
+
+                      </td>
+
+                      <td className="p-4">
+
+                        {product.bestSeller ? (
+                          <span className="text-green-400 font-semibold">
+                            ✅ Yes
+                          </span>
+                        ) : (
+                          <span className="text-red-400">
+                            ❌ No
+                          </span>
+                        )}
+
+                      </td>
+
+                      <td className="p-4">
+
+                        <div className="flex flex-col lg:flex-row gap-3">
+
+                          <button
+                            onClick={() =>
+                              router.push(
+                                `/admin/edit-product/${product.id}`
+                              )
+                            }
+                            className="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg font-semibold transition"
+                          >
+                            ✏ Edit
+                          </button>
+
+                          <button
+                            onClick={() => removeProduct(product.id)}
+                            className="bg-red-600 hover:bg-red-700 px-5 py-2 rounded-lg font-semibold transition"
+                          >
+                            🗑 Delete
+                          </button>
+
+                        </div>
+
+                      </td>
+
+                    </tr>
+
+                  ))}
+                </tbody>
+
+              </table>
+
+            </div>
+
+          )}
 
         </div>
 
       </main>
+
     </>
   );
 }
