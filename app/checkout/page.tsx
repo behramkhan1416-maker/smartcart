@@ -32,53 +32,16 @@ export default function CheckoutPage() {
   const [city, setCity] = useState("");
   const [postalCode, setPostalCode] = useState("");
 
-  // Payment Plan
   const [paymentPlan, setPaymentPlan] = useState<"50%" | "100%">("50%");
 
-  // Payment Method
-  const [paymentMethod, setPaymentMethod] = useState<
-    "SadaPay" | "Easypaisa" | "JazzCash"
-  >("Easypaisa");
+  const [paymentMethod, setPaymentMethod] =
+    useState("Easypaisa");
 
   const [transactionId, setTransactionId] = useState("");
   const [paymentScreenshot, setPaymentScreenshot] = useState("");
   const [loading, setLoading] = useState(false);
 
-  /*
-   * SmartCart delivery benefit.
-   *
-   * Product prices already include the
-   * Rs. 250 delivery component.
-   *
-   * 50% Advance:
-   * Standard order value remains unchanged.
-   *
-   * 100% Advance:
-   * Customer receives the Rs. 250 delivery
-   * benefit automatically.
-   */
   const DELIVERY_BENEFIT = 250;
-
-  /*
-   * Replace these with your REAL payment
-   * account numbers before going live.
-   */
-  const paymentAccounts = {
-    Easypaisa: {
-      title: "SmartCart",
-      number: "03XXXXXXXXX",
-    },
-
-    JazzCash: {
-      title: "SmartCart",
-      number: "03XXXXXXXXX",
-    },
-
-    SadaPay: {
-      title: "SmartCart",
-      number: "03XXXXXXXXX",
-    },
-  };
 
   if (!cartContext) {
     return (
@@ -110,12 +73,6 @@ export default function CheckoutPage() {
 
   const cart = cartContext;
 
-  /*
-   * Standard order value.
-   *
-   * Product prices already contain
-   * the delivery component.
-   */
   const standardTotal = cart.cartItems.reduce(
     (total, item) =>
       total +
@@ -123,19 +80,11 @@ export default function CheckoutPage() {
     0
   );
 
-  /*
-   * 50% Advance Payment
-   */
   const advanceAmount50 = standardTotal * 0.5;
 
   const remainingAmount50 =
     standardTotal - advanceAmount50;
 
-  /*
-   * 100% Advance Payment
-   *
-   * Rs. 250 delivery benefit is deducted.
-   */
   const prepaidTotal =
     cart.cartItems.length > 0
       ? Math.max(
@@ -144,44 +93,25 @@ export default function CheckoutPage() {
         )
       : 0;
 
-  /*
-   * Final order value based on
-   * selected payment plan.
-   */
   const payableTotal =
     paymentPlan === "100%"
       ? prepaidTotal
       : standardTotal;
 
-  /*
-   * Amount paid immediately.
-   */
   const amountPayableNow =
     paymentPlan === "100%"
       ? prepaidTotal
       : advanceAmount50;
 
-  /*
-   * Remaining balance.
-   */
   const amountPayableLater =
     paymentPlan === "100%"
       ? 0
       : remainingAmount50;
 
-  /*
-   * Delivery display.
-   */
   const deliveryText =
     paymentPlan === "100%"
-      ? "FREE"
+      ? "Complimentary"
       : "Applicable on delivery";
-
-  /*
-   * Currently selected payment account.
-   */
-  const selectedPaymentAccount =
-    paymentAccounts[paymentMethod];
 
   async function placeOrder() {
     if (
@@ -192,10 +122,7 @@ export default function CheckoutPage() {
       !city.trim() ||
       !postalCode.trim()
     ) {
-      toast.error(
-        "Please fill all customer details."
-      );
-
+      toast.error("Please fill all customer details.");
       return;
     }
 
@@ -204,32 +131,19 @@ export default function CheckoutPage() {
       return;
     }
 
-    /*
-     * Both payment plans require
-     * an advance payment.
-     */
     if (!transactionId.trim()) {
-      toast.error(
-        "Please enter the Transaction ID."
-      );
-
+      toast.error("Please enter the Transaction ID.");
       return;
     }
 
     if (!paymentScreenshot) {
-      toast.error(
-        "Please upload the payment screenshot."
-      );
-
+      toast.error("Please upload the payment screenshot.");
       return;
     }
 
     try {
       setLoading(true);
 
-      /*
-       * Create order in Firebase.
-       */
       const orderReference = await addDoc(
         collection(db, "orders"),
         {
@@ -244,60 +158,33 @@ export default function CheckoutPage() {
 
           items: cart.cartItems,
 
-          /*
-           * Original product/order value.
-           */
           subtotal: standardTotal,
 
-          /*
-           * Delivery benefit only applies
-           * to 100% advance payment.
-           */
           deliveryBenefit:
             paymentPlan === "100%"
               ? DELIVERY_BENEFIT
               : 0,
 
-          /*
-           * Delivery charge record.
-           */
           delivery:
             paymentPlan === "100%"
               ? 0
               : DELIVERY_BENEFIT,
 
-          /*
-           * Final customer order value.
-           */
           total: payableTotal,
 
-          /*
-           * Payment plan.
-           */
           paymentPlan,
 
-          /*
-           * Selected payment method.
-           */
-          paymentMethod,
-
-          /*
-           * Amount received immediately.
-           */
           advanceAmount: amountPayableNow,
 
-          /*
-           * Remaining amount.
-           */
           remainingAmount: amountPayableLater,
 
-          transactionId:
-            transactionId.trim(),
+          paymentMethod,
+
+          transactionId: transactionId.trim(),
 
           paymentScreenshot,
 
-          paymentStatus:
-            "Waiting Verification",
+          paymentStatus: "Waiting Verification",
 
           status: "Pending",
 
@@ -305,9 +192,6 @@ export default function CheckoutPage() {
         }
       );
 
-      /*
-       * Reduce product stock.
-       */
       for (const item of cart.cartItems) {
         try {
           await updateDoc(
@@ -317,9 +201,7 @@ export default function CheckoutPage() {
               item.product.id
             ),
             {
-              stock: increment(
-                -item.quantity
-              ),
+              stock: increment(-item.quantity),
             }
           );
         } catch (stockError) {
@@ -330,26 +212,17 @@ export default function CheckoutPage() {
         }
       }
 
-      /*
-       * Empty cart.
-       */
       cart.setCartItems([]);
 
       toast.success(
         "Order submitted successfully!"
       );
 
-      /*
-       * Open success page.
-       */
       router.push(
         `/order-success?orderId=${orderReference.id}`
       );
     } catch (error) {
-      console.error(
-        "Order error:",
-        error
-      );
+      console.error("Order error:", error);
 
       toast.error(
         "Failed to place the order. Please try again."
@@ -366,9 +239,7 @@ export default function CheckoutPage() {
       <main className="min-h-screen bg-black py-12 text-white sm:py-16">
         <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-2">
 
-          {/* ================================
-              CUSTOMER DETAILS
-          ================================= */}
+          {/* CUSTOMER DETAILS */}
 
           <section className="rounded-3xl border border-yellow-400/20 bg-gray-900 p-6 sm:p-8">
 
@@ -387,55 +258,47 @@ export default function CheckoutPage() {
 
             <div className="mt-8 space-y-5">
 
-              {/* FULL NAME */}
+              {/* CUSTOMER INFORMATION */}
 
               <input
                 type="text"
                 placeholder="Full Name"
                 value={name}
-                onChange={(event) =>
-                  setName(event.target.value)
+                onChange={(e) =>
+                  setName(e.target.value)
                 }
                 className="w-full rounded-xl border border-gray-700 bg-black p-4 text-white outline-none focus:border-yellow-400"
               />
-
-              {/* EMAIL */}
 
               <input
                 type="email"
                 placeholder="Email Address"
                 value={email}
-                onChange={(event) =>
-                  setEmail(event.target.value)
+                onChange={(e) =>
+                  setEmail(e.target.value)
                 }
                 className="w-full rounded-xl border border-gray-700 bg-black p-4 text-white outline-none focus:border-yellow-400"
               />
-
-              {/* PHONE */}
 
               <input
                 type="tel"
                 placeholder="Phone Number"
                 value={phone}
-                onChange={(event) =>
-                  setPhone(event.target.value)
+                onChange={(e) =>
+                  setPhone(e.target.value)
                 }
                 className="w-full rounded-xl border border-gray-700 bg-black p-4 text-white outline-none focus:border-yellow-400"
               />
-
-              {/* ADDRESS */}
 
               <input
                 type="text"
                 placeholder="Complete Shipping Address"
                 value={address}
-                onChange={(event) =>
-                  setAddress(event.target.value)
+                onChange={(e) =>
+                  setAddress(e.target.value)
                 }
                 className="w-full rounded-xl border border-gray-700 bg-black p-4 text-white outline-none focus:border-yellow-400"
               />
-
-              {/* CITY + POSTAL CODE */}
 
               <div className="grid gap-5 sm:grid-cols-2">
 
@@ -443,8 +306,8 @@ export default function CheckoutPage() {
                   type="text"
                   placeholder="City"
                   value={city}
-                  onChange={(event) =>
-                    setCity(event.target.value)
+                  onChange={(e) =>
+                    setCity(e.target.value)
                   }
                   className="w-full rounded-xl border border-gray-700 bg-black p-4 text-white outline-none focus:border-yellow-400"
                 />
@@ -453,19 +316,15 @@ export default function CheckoutPage() {
                   type="text"
                   placeholder="Postal Code"
                   value={postalCode}
-                  onChange={(event) =>
-                    setPostalCode(
-                      event.target.value
-                    )
+                  onChange={(e) =>
+                    setPostalCode(e.target.value)
                   }
                   className="w-full rounded-xl border border-gray-700 bg-black p-4 text-white outline-none focus:border-yellow-400"
                 />
 
               </div>
 
-              {/* ================================
-                  PAYMENT PLAN
-              ================================= */}
+              {/* PAYMENT PLAN */}
 
               <div className="pt-5">
 
@@ -480,7 +339,7 @@ export default function CheckoutPage() {
 
                 <div className="mt-5 grid gap-4">
 
-                  {/* 50% ADVANCE */}
+                  {/* 50% */}
 
                   <label
                     className={`cursor-pointer rounded-2xl border p-5 transition ${
@@ -489,7 +348,6 @@ export default function CheckoutPage() {
                         : "border-gray-700 bg-black hover:border-gray-500"
                     }`}
                   >
-
                     <div className="flex items-start gap-4">
 
                       <input
@@ -526,8 +384,8 @@ export default function CheckoutPage() {
                           Reserve your order with a
                           50% advance payment. The
                           remaining balance is payable
-                          upon delivery under standard
-                          delivery terms.
+                          upon delivery, with applicable
+                          delivery charges.
                         </p>
 
                         <div className="mt-4 grid gap-2 text-sm sm:grid-cols-2">
@@ -537,7 +395,7 @@ export default function CheckoutPage() {
                               Pay Now
                             </span>
 
-                            <div className="mt-1 font-black text-white">
+                            <div className="mt-1 font-black">
                               Rs.{" "}
                               {advanceAmount50.toLocaleString()}
                             </div>
@@ -548,7 +406,7 @@ export default function CheckoutPage() {
                               Pay on Delivery
                             </span>
 
-                            <div className="mt-1 font-black text-white">
+                            <div className="mt-1 font-black">
                               Rs.{" "}
                               {remainingAmount50.toLocaleString()}
                             </div>
@@ -557,12 +415,10 @@ export default function CheckoutPage() {
                         </div>
 
                       </div>
-
                     </div>
-
                   </label>
 
-                  {/* 100% ADVANCE */}
+                  {/* 100% */}
 
                   <label
                     className={`cursor-pointer rounded-2xl border p-5 transition ${
@@ -571,7 +427,6 @@ export default function CheckoutPage() {
                         : "border-gray-700 bg-black hover:border-gray-500"
                     }`}
                   >
-
                     <div className="flex items-start gap-4">
 
                       <input
@@ -614,9 +469,9 @@ export default function CheckoutPage() {
                         </div>
 
                         <p className="mt-3 text-sm leading-6 text-gray-400">
-                          Complete your payment in
-                          advance and receive complimentary
-                          delivery, reflected as a Rs. 250
+                          Complete payment in advance
+                          and receive complimentary
+                          delivery with a Rs. 250
                           delivery benefit.
                         </p>
 
@@ -625,7 +480,7 @@ export default function CheckoutPage() {
                           <div className="flex justify-between text-sm">
 
                             <span className="text-gray-400">
-                              Prepayment Benefit
+                              Delivery Benefit
                             </span>
 
                             <span className="font-bold text-green-400">
@@ -649,18 +504,13 @@ export default function CheckoutPage() {
                         </div>
 
                       </div>
-
                     </div>
-
                   </label>
 
                 </div>
-
               </div>
 
-              {/* ================================
-                  PAYMENT METHOD
-              ================================= */}
+              {/* PAYMENT METHOD */}
 
               <div className="pt-5">
 
@@ -669,160 +519,253 @@ export default function CheckoutPage() {
                 </h2>
 
                 <p className="mt-2 text-sm text-gray-400">
-                  Select your preferred payment
-                  service.
+                  Select the account through which
+                  you will make your advance payment.
                 </p>
 
                 <div className="mt-5 grid gap-3">
 
-                  {[
-                    "Easypaisa",
-                    "JazzCash",
-                    "SadaPay",
-                  ].map((method) => (
+                  {/* EASYPAISA */}
 
-                    <label
-                      key={method}
-                      className={`cursor-pointer rounded-xl border p-4 transition ${
-                        paymentMethod === method
-                          ? "border-yellow-400 bg-yellow-400/10"
-                          : "border-gray-700 bg-black hover:border-gray-500"
-                      }`}
-                    >
+                  <label
+                    className={`cursor-pointer rounded-xl border p-4 transition ${
+                      paymentMethod === "Easypaisa"
+                        ? "border-yellow-400 bg-yellow-400/10"
+                        : "border-gray-700 bg-black hover:border-gray-500"
+                    }`}
+                  >
 
-                      <div className="flex items-center">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="Easypaisa"
+                      checked={
+                        paymentMethod ===
+                        "Easypaisa"
+                      }
+                      onChange={() =>
+                        setPaymentMethod(
+                          "Easypaisa"
+                        )
+                      }
+                      className="h-5 w-5 accent-yellow-400"
+                    />
 
-                        <input
-                          type="radio"
-                          name="paymentMethod"
-                          checked={
-                            paymentMethod ===
-                            method
-                          }
-                          onChange={() =>
-                            setPaymentMethod(
-                              method as
-                                | "SadaPay"
-                                | "Easypaisa"
-                                | "JazzCash"
-                            )
-                          }
-                          className="h-5 w-5 accent-yellow-400"
-                        />
+                    <span className="ml-3 font-bold">
+                      Easypaisa
+                    </span>
 
-                        <span className="ml-3 font-bold">
-                          {method}
-                        </span>
+                  </label>
 
-                      </div>
+                  {/* SADAPAY */}
 
-                    </label>
+                  <label
+                    className={`cursor-pointer rounded-xl border p-4 transition ${
+                      paymentMethod === "SadaPay"
+                        ? "border-yellow-400 bg-yellow-400/10"
+                        : "border-gray-700 bg-black hover:border-gray-500"
+                    }`}
+                  >
 
-                  ))}
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="SadaPay"
+                      checked={
+                        paymentMethod ===
+                        "SadaPay"
+                      }
+                      onChange={() =>
+                        setPaymentMethod(
+                          "SadaPay"
+                        )
+                      }
+                      className="h-5 w-5 accent-yellow-400"
+                    />
+
+                    <span className="ml-3 font-bold">
+                      SadaPay
+                    </span>
+
+                  </label>
+
+                  {/* JAZZCASH */}
+
+                  <label
+                    className={`cursor-pointer rounded-xl border p-4 transition ${
+                      paymentMethod === "JazzCash"
+                        ? "border-yellow-400 bg-yellow-400/10"
+                        : "border-gray-700 bg-black hover:border-gray-500"
+                    }`}
+                  >
+
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="JazzCash"
+                      checked={
+                        paymentMethod ===
+                        "JazzCash"
+                      }
+                      onChange={() =>
+                        setPaymentMethod(
+                          "JazzCash"
+                        )
+                      }
+                      className="h-5 w-5 accent-yellow-400"
+                    />
+
+                    <span className="ml-3 font-bold">
+                      JazzCash
+                    </span>
+
+                  </label>
+
+                  {/* UBL BANK TRANSFER */}
+
+                  <label
+                    className={`cursor-pointer rounded-xl border p-4 transition ${
+                      paymentMethod ===
+                      "UBL Bank Transfer"
+                        ? "border-yellow-400 bg-yellow-400/10"
+                        : "border-gray-700 bg-black hover:border-gray-500"
+                    }`}
+                  >
+
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="UBL Bank Transfer"
+                      checked={
+                        paymentMethod ===
+                        "UBL Bank Transfer"
+                      }
+                      onChange={() =>
+                        setPaymentMethod(
+                          "UBL Bank Transfer"
+                        )
+                      }
+                      className="h-5 w-5 accent-yellow-400"
+                    />
+
+                    <span className="ml-3 font-bold">
+                      UBL Bank Transfer
+                    </span>
+
+                  </label>
 
                 </div>
 
               </div>
 
-              {/* ================================
-                  PAYMENT ACCOUNT DETAILS
-              ================================= */}
+              {/* PAYMENT ACCOUNT DETAILS */}
 
-              <div className="space-y-5">
+              <div className="rounded-2xl border border-yellow-400/30 bg-black p-5">
 
-                <div className="rounded-2xl border border-yellow-400/30 bg-black p-5">
+                <h3 className="font-black text-yellow-400">
+                  {paymentMethod ===
+                  "UBL Bank Transfer"
+                    ? "UBL Bank Transfer Details"
+                    : `${paymentMethod} Payment Details`}
+                </h3>
 
-                  <h3 className="font-black text-yellow-400">
-                    {paymentMethod} Payment
-                  </h3>
+                {paymentMethod ===
+                "UBL Bank Transfer" ? (
+                  <>
+                    <p className="mt-4">
+                      Bank:{" "}
+                      <strong>United Bank Limited (UBL)</strong>
+                    </p>
 
-                  <p className="mt-3">
-                    Account Title:{" "}
-                    <strong>
-                      {selectedPaymentAccount.title}
-                    </strong>
-                  </p>
+                    <p className="mt-2">
+                      Account Title:{" "}
+                      <strong>SmartCart</strong>
+                    </p>
 
-                  <p className="mt-2">
-                    Account Number:{" "}
-                    <strong>
-                      {selectedPaymentAccount.number}
-                    </strong>
-                  </p>
+                    <p className="mt-2">
+                      Account Number:{" "}
+                      <strong>XXXXXXXXXXXX</strong>
+                    </p>
 
-                  <p className="mt-3 text-sm text-gray-500">
-                    Please transfer the required
-                    amount using the selected
-                    payment method and enter the
-                    transaction details below.
-                  </p>
+                    <p className="mt-2">
+                      IBAN:{" "}
+                      <strong>PKXXXXXXXXXXXX</strong>
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="mt-4">
+                      Account Title:{" "}
+                      <strong>SmartCart</strong>
+                    </p>
 
-                </div>
-
-                {/* TRANSACTION ID */}
-
-                <input
-                  type="text"
-                  placeholder="Transaction ID"
-                  value={transactionId}
-                  onChange={(event) =>
-                    setTransactionId(
-                      event.target.value
-                    )
-                  }
-                  className="w-full rounded-xl border border-gray-700 bg-black p-4 text-white outline-none focus:border-yellow-400"
-                />
-
-                {/* PAYMENT SCREENSHOT */}
-
-                <CldUploadWidget
-                  uploadPreset="smartcart_uploads"
-                  onSuccess={(result: any) => {
-
-                    const uploadedUrl =
-                      result?.info?.secure_url;
-
-                    if (uploadedUrl) {
-                      setPaymentScreenshot(
-                        uploadedUrl
-                      );
-
-                      toast.success(
-                        "Payment screenshot uploaded!"
-                      );
-                    }
-                  }}
-                >
-                  {({ open }) => (
-
-                    <button
-                      type="button"
-                      onClick={() => open()}
-                      className="w-full rounded-xl bg-blue-600 py-4 font-black text-white transition hover:bg-blue-500"
-                    >
-                      📷 Upload Payment Screenshot
-                    </button>
-
-                  )}
-                </CldUploadWidget>
-
-                {paymentScreenshot && (
-
-                  <div className="rounded-xl border border-green-500/30 bg-green-500/10 p-4 font-bold text-green-400">
-                    ✅ Payment screenshot uploaded successfully
-                  </div>
-
+                    <p className="mt-2">
+                      Account Number:{" "}
+                      <strong>03XXXXXXXXX</strong>
+                    </p>
+                  </>
                 )}
 
+                <p className="mt-4 text-sm text-gray-500">
+                  Replace the placeholder payment
+                  details above with your actual
+                  account information.
+                </p>
+
               </div>
 
-            </div>
+              {/* TRANSACTION ID */}
 
+              <input
+                type="text"
+                placeholder="Transaction ID / Reference Number"
+                value={transactionId}
+                onChange={(e) =>
+                  setTransactionId(e.target.value)
+                }
+                className="w-full rounded-xl border border-gray-700 bg-black p-4 text-white outline-none focus:border-yellow-400"
+              />
+
+              {/* SCREENSHOT */}
+
+              <CldUploadWidget
+                uploadPreset="smartcart_uploads"
+                onSuccess={(result: any) => {
+                  const uploadedUrl =
+                    result?.info?.secure_url;
+
+                  if (uploadedUrl) {
+                    setPaymentScreenshot(
+                      uploadedUrl
+                    );
+
+                    toast.success(
+                      "Payment screenshot uploaded!"
+                    );
+                  }
+                }}
+              >
+                {({ open }) => (
+                  <button
+                    type="button"
+                    onClick={() => open()}
+                    className="w-full rounded-xl bg-blue-600 py-4 font-black text-white transition hover:bg-blue-500"
+                  >
+                    📷 Upload Payment Screenshot
+                  </button>
+                )}
+              </CldUploadWidget>
+
+              {paymentScreenshot && (
+                <div className="rounded-xl border border-green-500/30 bg-green-500/10 p-4 font-bold text-green-400">
+                  ✅ Payment screenshot uploaded successfully
+                </div>
+              )}
+
+            </div>
           </section>
 
-          {/* ================================
-              ORDER SUMMARY
-          ================================= */}
+          {/* ORDER SUMMARY */}
 
           <aside className="h-fit rounded-3xl border border-yellow-400/20 bg-gray-900 p-6 lg:sticky lg:top-8 sm:p-8">
 
@@ -831,7 +774,6 @@ export default function CheckoutPage() {
             </h2>
 
             {cart.cartItems.length === 0 ? (
-
               <div className="py-12 text-center">
 
                 <span className="text-5xl">
@@ -843,13 +785,10 @@ export default function CheckoutPage() {
                 </p>
 
               </div>
-
             ) : (
-
               <div className="mt-6 space-y-4">
 
                 {cart.cartItems.map((item) => (
-
                   <div
                     key={item.product.id}
                     className="flex justify-between gap-5 border-b border-gray-700 pb-4"
@@ -871,23 +810,18 @@ export default function CheckoutPage() {
                     <p className="font-bold text-yellow-400">
                       Rs.{" "}
                       {(
-                        Number(
-                          item.product.price
-                        ) * item.quantity
+                        Number(item.product.price) *
+                        item.quantity
                       ).toLocaleString()}
                     </p>
 
                   </div>
-
                 ))}
 
               </div>
-
             )}
 
-            {/* ================================
-                PRICE CALCULATION
-            ================================= */}
+            {/* PRICE CALCULATION */}
 
             <div className="mt-8 space-y-4">
 
@@ -905,11 +839,10 @@ export default function CheckoutPage() {
               </div>
 
               {paymentPlan === "100%" && (
-
                 <div className="flex justify-between">
 
                   <span className="text-green-400">
-                    Prepayment Benefit
+                    Prepaid Delivery Benefit
                   </span>
 
                   <span className="font-bold text-green-400">
@@ -917,7 +850,6 @@ export default function CheckoutPage() {
                   </span>
 
                 </div>
-
               )}
 
               <div className="flex justify-between">
@@ -955,8 +887,6 @@ export default function CheckoutPage() {
 
               </div>
 
-              {/* PAY NOW */}
-
               <div className="rounded-xl border border-yellow-400/20 bg-yellow-400/5 p-4">
 
                 <div className="flex justify-between">
@@ -973,7 +903,6 @@ export default function CheckoutPage() {
                 </div>
 
                 {amountPayableLater > 0 && (
-
                   <div className="mt-2 flex justify-between">
 
                     <span className="text-gray-400">
@@ -986,16 +915,13 @@ export default function CheckoutPage() {
                     </span>
 
                   </div>
-
                 )}
 
               </div>
 
             </div>
 
-            {/* ================================
-                PLACE ORDER
-            ================================= */}
+            {/* PLACE ORDER */}
 
             <button
               type="button"
@@ -1018,13 +944,12 @@ export default function CheckoutPage() {
             </button>
 
             <p className="mt-4 text-center text-xs leading-5 text-gray-500">
-              By placing this order, you
-              confirm that the payment
-              information submitted is accurate.
+              By placing this order, you confirm
+              that the payment information submitted
+              is accurate.
             </p>
 
           </aside>
-
         </div>
       </main>
     </>
