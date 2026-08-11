@@ -18,7 +18,6 @@ import SmoothScroll from "./components/SmoothScroll";
 import LoadingScreen from "./components/LoadingScreen";
 import FlyingImage from "./components/FlyingImage";
 
-// Website visitor analytics
 import VisitorTracker from "./components/VisitorTracker";
 
 const geistSans = Geist({
@@ -48,22 +47,24 @@ export default function RootLayout({
     >
       <body className="overflow-x-hidden bg-black text-white">
 
-        {/* Website Visit Analytics */}
         <VisitorTracker />
 
-        {/* Background Effects */}
-        <BackgroundScene />
-        <ShoppingIconsBackground />
-        <LuxurySpotlight />
+        {/* DESKTOP ONLY - ALL ANIMATED BACKGROUNDS */}
+        <div className="hidden md:block">
+          <BackgroundScene />
+          <ShoppingIconsBackground />
+          <LuxurySpotlight />
+          <MouseGlow />
+        </div>
 
-        {/* Premium Effects */}
-        <MouseGlow />
-        <SmoothScroll />
+        {/* DESKTOP ONLY - SMOOTH SCROLL */}
+        <div className="hidden md:block">
+          <SmoothScroll />
+        </div>
 
-        {/* Loading Screen */}
+        {/* Loading screen */}
         <LoadingScreen />
 
-        {/* Toast Notifications */}
         <Toaster
           position="top-right"
           toastOptions={{
@@ -77,11 +78,11 @@ export default function RootLayout({
           }}
         />
 
-        {/* SmartCart Providers */}
         <CartProvider>
           <WishlistProvider>
             <SearchProvider>
               <FlyToCartProvider>
+
                 <FlyingImage />
 
                 {children}

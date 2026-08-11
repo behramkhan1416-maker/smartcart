@@ -5,14 +5,27 @@ import { useEffect, useState } from "react";
 
 export default function LoadingScreen() {
   const [loading, setLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    const mobile = window.matchMedia("(max-width: 767px)").matches;
+    setIsMobile(mobile);
+
+    if (mobile) {
+      setLoading(false);
+      return;
+    }
+
     const timer = setTimeout(() => {
       setLoading(false);
     }, 2200);
 
     return () => clearTimeout(timer);
   }, []);
+
+  if (isMobile) {
+    return null;
+  }
 
   return (
     <AnimatePresence>
