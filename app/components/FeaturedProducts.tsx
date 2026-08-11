@@ -202,7 +202,6 @@ export default function FeaturedProducts() {
 
                           <button
                             type="button"
-                            whileTap={{ scale: 0.9 }}
                             onClick={(e) => {
                               e.preventDefault();
                               toggleWishlist(product);
@@ -363,4 +362,5 @@ export default function FeaturedProducts() {
     </section>
   );
 }
+
 
