@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 
 import MagneticButton from "./MagneticButton";
@@ -120,11 +121,15 @@ export default function FeaturedProducts() {
     <section className="bg-black py-10 text-white sm:py-16 lg:py-20">
       <div className="mx-auto max-w-7xl px-3 sm:px-6">
 
-        <h2
+        <motion.h2
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
           className="mb-6 text-center text-2xl font-black text-yellow-400 sm:mb-10 sm:text-3xl lg:mb-12 lg:text-4xl"
         >
-          â­ Featured Products
-        </h2>
+          ⭐ Featured Products
+        </motion.h2>
 
         {products.length === 0 ? (
           <p className="text-center text-base text-gray-400 sm:text-xl">
@@ -140,7 +145,17 @@ export default function FeaturedProducts() {
               return (
                 <LuxuryProductCard key={product.id}>
                   <TiltCard>
-                    <div
+                    <motion.div
+                      initial={{ opacity: 0, y: 25 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{
+                        duration: 0.4,
+                        delay: Math.min(index * 0.04, 0.3),
+                      }}
+                      whileHover={{
+                        y: -6,
+                      }}
                       className="
                         group flex h-full min-h-88.75
                         flex-col overflow-hidden
@@ -200,7 +215,7 @@ export default function FeaturedProducts() {
                             SALE
                           </span>
 
-                          <button
+                          <motion.button
                             type="button"
                             whileTap={{ scale: 0.9 }}
                             onClick={(e) => {
@@ -223,8 +238,8 @@ export default function FeaturedProducts() {
                               }
                             `}
                           >
-                            â¤ï¸
-                          </button>
+                            ❤️
+                          </motion.button>
                         </div>
                       </Link>
 
@@ -257,7 +272,7 @@ export default function FeaturedProducts() {
                             sm:text-xs
                           "
                         >
-                          â­â­â­â­â­
+                          ⭐⭐⭐⭐⭐
                         </div>
 
                         <p
@@ -345,12 +360,12 @@ export default function FeaturedProducts() {
                               sm:block
                             "
                           >
-                            âš¡ Buy Now
+                            ⚡ Buy Now
                           </button>
                         </div>
 
                       </div>
-                    </div>
+                    </motion.div>
                   </TiltCard>
                 </LuxuryProductCard>
               );
@@ -363,4 +378,3 @@ export default function FeaturedProducts() {
     </section>
   );
 }
-
