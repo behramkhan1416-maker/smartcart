@@ -26,6 +26,10 @@ export function useProducts() {
   return useContext(ProductContext);
 }
 
+const CACHE_KEY = "smartcart_products_cache_v1";
+const CACHE_TIME_KEY = "smartcart_products_cache_time_v1";
+const CACHE_TTL = 5 * 60 * 1000;
+
 export default function ProductProvider({
   children,
 }: {
@@ -39,7 +43,35 @@ export default function ProductProvider({
 
     async function loadProducts() {
       try {
-        const snapshot = await getDocs(collection(db, "products"));
+        // First try session/browser cache.
+        try {
+          const cached = sessionStorage.getItem(CACHE_KEY);
+          const cachedTime = Number(
+            sessionStorage.getItem(CACHE_TIME_KEY) || 0
+          );
+
+          if (
+            cached &&
+            cachedTime &&
+            Date.now() - cachedTime < CACHE_TTL
+          ) {
+            const parsed = JSON.parse(cached) as Product[];
+
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              if (mounted) {
+                setProducts(parsed);
+                setLoading(false);
+              }
+              return;
+            }
+          }
+        } catch {
+          // Ignore cache errors.
+        }
+
+        const snapshot = await getDocs(
+          collection(db, "products")
+        );
 
         if (!mounted) return;
 
@@ -49,9 +81,24 @@ export default function ProductProvider({
         }));
 
         setProducts(list);
+        setLoading(false);
+
+        try {
+          sessionStorage.setItem(
+            CACHE_KEY,
+            JSON.stringify(list)
+          );
+
+          sessionStorage.setItem(
+            CACHE_TIME_KEY,
+            String(Date.now())
+          );
+        } catch {
+          // Ignore storage errors.
+        }
       } catch (error) {
         console.error("Failed to load products:", error);
-      } finally {
+
         if (mounted) {
           setLoading(false);
         }

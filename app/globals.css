@@ -161,3 +161,47 @@ html:not(.dark) button {
     overflow-x: hidden;
   }
 }
+/* =========================================================
+   SMARTCART MOBILE PERFORMANCE MODE
+   ========================================================= */
+
+@media (max-width: 767px) {
+
+  html {
+    scroll-behavior: auto !important;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0s !important;
+    transition-duration: 0.001ms !important;
+    transition-delay: 0s !important;
+    scroll-behavior: auto !important;
+  }
+
+  img,
+  video {
+    max-width: 100%;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-no-transform,
+  .mobile-no-animation {
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+}

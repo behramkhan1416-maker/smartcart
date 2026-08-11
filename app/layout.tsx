@@ -52,15 +52,15 @@ export default function RootLayout({
 
         {/* DESKTOP ONLY - ALL ANIMATED BACKGROUNDS */}
         <div className="hidden md:block">
-          <BackgroundScene />
-          <ShoppingIconsBackground />
-          <LuxurySpotlight />
-          <MouseGlow />
+          <div className="hidden md:block"><div className="hidden md:block"><BackgroundScene /></div></div>
+          <div className="hidden md:block"><div className="hidden md:block"><ShoppingIconsBackground /></div></div>
+          <div className="hidden md:block"><div className="hidden md:block"><LuxurySpotlight /></div></div>
+          <div className="hidden md:block"><div className="hidden md:block"><MouseGlow /></div></div>
         </div>
 
         {/* DESKTOP ONLY - SMOOTH SCROLL */}
         <div className="hidden md:block">
-          <SmoothScroll />
+          <div className="hidden md:block"><div className="hidden md:block"><SmoothScroll /></div></div>
         </div>
 
         {/* Loading screen */}
@@ -99,4 +99,6 @@ export default function RootLayout({
     </html>
   );
 }
+
+
 
