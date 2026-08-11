@@ -1,13 +1,9 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { db } from "../lib/firebase";
-import {
-  collection,
-  getDocs,
-} from "firebase/firestore";
+import { useMemo } from "react";
+import { useProducts } from "../context/ProductContext";
 
 type Product = {
   id: string;
@@ -18,29 +14,13 @@ type Product = {
 };
 
 export default function FlashSale() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const { products: allProducts } = useProducts();
 
-  useEffect(() => {
-    async function loadProducts() {
-      const snapshot = await getDocs(
-        collection(db, "products")
-      );
-
-      const list = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Product[];
-
-      const flashProducts = list.filter(
-        (product) =>
-          product.flashSale === true
-      );
-
-      setProducts(flashProducts);
-    }
-
-    loadProducts();
-  }, []);
+  const products = useMemo(
+    () =>
+      allProducts.filter((product) => (product as Product & { flashSale?: boolean }).flashSale === true),
+    [allProducts]
+  );
 
   return (
     <section className="bg-gradient-to-b from-red-950 via-black to-black py-10 text-white sm:py-16 lg:py-20">
@@ -56,7 +36,7 @@ export default function FlashSale() {
             </span>
 
             <h2 className="mt-1 text-2xl font-black sm:text-3xl lg:text-4xl">
-              🔥 Flash{" "}
+              ðŸ”¥ Flash{" "}
               <span className="text-yellow-400">
                 Sale
               </span>
@@ -83,7 +63,7 @@ export default function FlashSale() {
               sm:text-sm
             "
           >
-            View All →
+            View All â†’
           </Link>
 
         </div>
@@ -181,7 +161,7 @@ export default function FlashSale() {
                     sm:text-xs
                   "
                 >
-                  ⭐⭐⭐⭐⭐
+                  â­â­â­â­â­
                 </div>
 
                 <p
@@ -233,3 +213,4 @@ export default function FlashSale() {
     </section>
   );
 }
+

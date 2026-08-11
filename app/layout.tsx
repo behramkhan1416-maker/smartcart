@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -7,6 +7,7 @@ import { Toaster } from "react-hot-toast";
 import CartProvider from "./context/CartContext";
 import WishlistProvider from "./context/WishlistContext";
 import SearchProvider from "./context/SearchContext";
+import ProductProvider from "./context/ProductContext";
 import FlyToCartProvider from "./context/FlyToCartContext";
 
 import BackgroundScene from "./components/background/BackgroundScene";
@@ -81,13 +82,15 @@ export default function RootLayout({
         <CartProvider>
           <WishlistProvider>
             <SearchProvider>
-              <FlyToCartProvider>
+              <ProductProvider>
+                <FlyToCartProvider>
 
                 <FlyingImage />
 
                 {children}
 
               </FlyToCartProvider>
+              </ProductProvider>
             </SearchProvider>
           </WishlistProvider>
         </CartProvider>
@@ -96,3 +99,4 @@ export default function RootLayout({
     </html>
   );
 }
+

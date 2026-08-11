@@ -2,12 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import {
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useContext, useRef } from "react";
 import toast from "react-hot-toast";
 
 import MagneticButton from "./MagneticButton";
@@ -19,37 +14,21 @@ import { WishlistContext } from "../context/WishlistContext";
 import { useFlyToCart } from "../context/FlyToCartContext";
 
 import { Product } from "../data/products";
+import { useProducts } from "../context/ProductContext";
 
-import { db } from "../lib/firebase";
-import { collection, getDocs } from "firebase/firestore";
+
+
 
 export default function FeaturedProducts() {
   const cart = useContext(CartContext)!;
   const wishlist = useContext(WishlistContext)!;
   const { setFly } = useFlyToCart();
 
-  const [products, setProducts] = useState<Product[]>([]);
+  const { products } = useProducts();
 
   const imageRefs = useRef<
     Record<string, HTMLDivElement | null>
   >({});
-
-  useEffect(() => {
-    async function loadProducts() {
-      const snapshot = await getDocs(
-        collection(db, "products")
-      );
-
-      const list = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...(doc.data() as Omit<Product, "id">),
-      }));
-
-      setProducts(list);
-    }
-
-    loadProducts();
-  }, []);
 
   function addToCart(
     product: Product,
@@ -362,5 +341,9 @@ export default function FeaturedProducts() {
     </section>
   );
 }
+
+
+
+
 
 

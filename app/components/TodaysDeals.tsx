@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useProducts } from "../context/ProductContext";
 import Image from "next/image";
 import Link from "next/link";
-import { db } from "../lib/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { motion } from "framer-motion";
 
@@ -16,34 +16,25 @@ type Product = {
 };
 
 export default function TodaysDeals() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const { products: allProducts } = useProducts();
 
+  const products = useMemo(
+    () =>
+      [...allProducts]
+        .filter(
+          (product) =>
+            (product as any).todaysDeal === true ||
+            (product as any).todayDeal === true ||
+            (product as any).deal === true
+        )
+        .slice(0, 8),
+    [allProducts]
+  );
   const [timeLeft, setTimeLeft] = useState({
     hours: 12,
     minutes: 0,
     seconds: 0,
   });
-
-  useEffect(() => {
-    async function loadProducts() {
-      const snapshot = await getDocs(
-        collection(db, "products")
-      );
-
-      const list = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Product[];
-
-      const deals = list.filter(
-        (product) => product.todaysDeal === true
-      );
-
-      setProducts(deals);
-    }
-
-    loadProducts();
-  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -100,7 +91,7 @@ export default function TodaysDeals() {
             </span>
 
             <h2 className="mt-1 text-2xl font-black sm:text-3xl lg:text-4xl">
-              🔥 Today&apos;s{" "}
+              ðŸ”¥ Today&apos;s{" "}
               <span className="text-red-500">
                 Deals
               </span>
@@ -239,7 +230,7 @@ export default function TodaysDeals() {
                     </Link>
 
                     <div className="mt-1 text-[8px] text-yellow-400 sm:text-xs">
-                      ⭐⭐⭐⭐⭐
+                      â­â­â­â­â­
                     </div>
 
                     <div className="mt-1 flex flex-col gap-0.5 sm:mt-2">
@@ -284,3 +275,5 @@ export default function TodaysDeals() {
     </section>
   );
 }
+
+

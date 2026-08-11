@@ -1,13 +1,9 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { db } from "../lib/firebase";
-import {
-  collection,
-  getDocs,
-} from "firebase/firestore";
+import { useMemo } from "react";
+import { useProducts } from "../context/ProductContext";
 
 type Product = {
   id: string;
@@ -18,29 +14,17 @@ type Product = {
 };
 
 export default function NewArrivals() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const { products: allProducts } = useProducts();
 
-  useEffect(() => {
-    async function loadProducts() {
-      const snapshot = await getDocs(
-        collection(db, "products")
-      );
-
-      const list = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Product[];
-
-      const newArrivalProducts = list.filter(
-        (product) =>
-          product.newArrival === true
-      );
-
-      setProducts(newArrivalProducts);
-    }
-
-    loadProducts();
-  }, []);
+  const products = useMemo(() => {
+    return [...allProducts]
+      .sort((a, b) => {
+        const aDate = (a as any).createdAt?.seconds ?? 0;
+        const bDate = (b as any).createdAt?.seconds ?? 0;
+        return bDate - aDate;
+      })
+      .slice(0, 8);
+  }, [allProducts]);
 
   return (
     <section className="bg-black py-10 text-white sm:py-16 lg:py-20">
@@ -83,7 +67,7 @@ export default function NewArrivals() {
               sm:text-sm
             "
           >
-            View All →
+            View All â†’
           </Link>
 
         </div>
@@ -180,7 +164,7 @@ export default function NewArrivals() {
                     sm:text-xs
                   "
                 >
-                  ⭐⭐⭐⭐⭐
+                  â­â­â­â­â­
                 </div>
 
                 <p
