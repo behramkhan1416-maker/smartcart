@@ -197,7 +197,7 @@ export default function FeaturedProducts() {
                               ${
                                 liked
                                   ? "bg-red-500 text-white"
-                                  : "bg-white text-black"
+                                  : "bg-gray-900 text-white border border-white/20"
                               }
                             `}
                           >
@@ -341,6 +341,7 @@ export default function FeaturedProducts() {
     </section>
   );
 }
+
 
 
 
