@@ -157,15 +157,9 @@ export default function NewArrivals() {
                   </h3>
                 </Link>
 
-                <div
-                  className="
-                    mt-1 text-[8px]
-                    text-yellow-400
-                    sm:text-xs
-                  "
-                >
-                  â­â­â­â­â­
-                </div>
+                <div className="mt-1 text-[8px] text-yellow-400 sm:text-xs">
+  5.0
+</div>
 
                 <p
                   className="
