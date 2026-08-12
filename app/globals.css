@@ -1,4 +1,4 @@
-﻿@import "tailwindcss";
+@import "tailwindcss";
 
 :root {
   --background: #050505;
@@ -72,7 +72,7 @@ html:not(.dark) .bg-gray-900 {
 
 /* White text becomes black */
 html:not(.dark) .text-white {
-  color: #ffffff !important;
+  color: #111111 !important;
 }
 
 /* Gray text */
@@ -208,30 +208,16 @@ html:not(.dark) button {
 
 
 /* =========================================================
-   PRODUCT CARDS — LIGHT MODE
-   Keep product cards readable and visually consistent.
+   SMARTCART LIGHT MODE PRODUCT TEXT FIX
    ========================================================= */
 
+html:not(.dark) .bg-zinc-900 .text-white,
+html:not(.dark) .bg-gray-900 .text-white,
+html:not(.dark) .bg-gray-950 .text-white {
+  color: #111827 !important;
+}
+
+html:not(.dark) .bg-zinc-900,
 html:not(.dark) .bg-gray-900 {
-  background-color: #f3f4f6 !important;
-}
-
-html:not(.dark) .bg-gray-900 .text-white {
-  color: #111827 !important;
-}
-
-html:not(.dark) .bg-gray-900 .text-gray-300 {
-  color: #374151 !important;
-}
-
-html:not(.dark) .bg-gray-900 .text-gray-400 {
-  color: #4b5563 !important;
-}
-
-html:not(.dark) .bg-black {
-  background-color: #ffffff !important;
-}
-
-html:not(.dark) .bg-black .text-white {
-  color: #111827 !important;
+  color: #111827;
 }
