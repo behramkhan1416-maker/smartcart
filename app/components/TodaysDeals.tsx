@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import { useProducts } from "../context/ProductContext";
@@ -91,7 +91,7 @@ export default function TodaysDeals() {
             </span>
 
             <h2 className="mt-1 text-2xl font-black sm:text-3xl lg:text-4xl">
-              ðŸ”¥ Today&apos;s{" "}
+              Today&apos;s{" "}
               <span className="text-red-500">
                 Deals
               </span>
