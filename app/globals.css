@@ -221,3 +221,27 @@ html:not(.dark) .bg-zinc-900,
 html:not(.dark) .bg-gray-900 {
   color: #111827;
 }
+/* =========================================================
+   FINAL PRODUCT CARD LIGHT-MODE OVERRIDE
+   Product cards remain dark, so their text stays LIGHT.
+   ========================================================= */
+
+html:not(.dark) .bg-zinc-900 {
+  background-color: #18181b !important;
+}
+
+html:not(.dark) .bg-zinc-900 .text-white,
+html:not(.dark) .bg-zinc-900 h3,
+html:not(.dark) .bg-zinc-900 p,
+html:not(.dark) .bg-zinc-900 span {
+  color: #ffffff !important;
+}
+
+html:not(.dark) .bg-zinc-900 .text-yellow-400,
+html:not(.dark) .bg-zinc-900 .text-yellow-500 {
+  color: #facc15 !important;
+}
+
+html:not(.dark) .bg-zinc-900 button:first-of-type {
+  color: #ffffff !important;
+}
