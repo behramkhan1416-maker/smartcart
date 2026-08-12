@@ -102,8 +102,7 @@ export default function FeaturedProducts() {
         <h2
           className="mb-6 text-center text-2xl font-black text-yellow-400 sm:mb-10 sm:text-3xl lg:mb-12 lg:text-4xl"
         >
-          â­ Featured Products
-        </h2>
+          ✨ Featured Products</h2>
 
         {products.length === 0 ? (
           <p className="text-center text-base text-gray-400 sm:text-xl">
@@ -247,9 +246,7 @@ export default function FeaturedProducts() {
                             text-yellow-400
                             sm:text-xs
                           "
-                        >
-                          â­â­â­â­â­
-                        </div>
+                        >⭐ 5.0</div>
 
                         <p
                           className="
@@ -354,6 +351,9 @@ export default function FeaturedProducts() {
     </section>
   );
 }
+
+
+
 
 
 
