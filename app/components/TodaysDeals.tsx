@@ -229,9 +229,7 @@ export default function TodaysDeals() {
 
                     </Link>
 
-                    <div className="mt-1 text-[8px] text-yellow-400 sm:text-xs">
-                      â­â­â­â­â­
-                    </div>
+                    <div className="mt-1 text-[8px] text-yellow-400 sm:text-xs">5.0</div>
 
                     <div className="mt-1 flex flex-col gap-0.5 sm:mt-2">
 

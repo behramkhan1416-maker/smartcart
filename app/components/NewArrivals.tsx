@@ -67,7 +67,7 @@ export default function NewArrivals() {
               sm:text-sm
             "
           >
-            View All â†’
+            View All
           </Link>
 
         </div>
