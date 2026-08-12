@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -36,7 +36,7 @@ export default function FlashSale() {
             </span>
 
             <h2 className="mt-1 text-2xl font-black sm:text-3xl lg:text-4xl">
-              ðŸ”¥ Flash{" "}
+              Flash{" "}
               <span className="text-yellow-400">
                 Sale
               </span>
@@ -63,7 +63,7 @@ export default function FlashSale() {
               sm:text-sm
             "
           >
-            View All â†’
+            View All
           </Link>
 
         </div>
@@ -161,7 +161,7 @@ export default function FlashSale() {
                     sm:text-xs
                   "
                 >
-                  â­â­â­â­â­
+                  Ã¢Â­ÂÃ¢Â­ÂÃ¢Â­ÂÃ¢Â­ÂÃ¢Â­Â
                 </div>
 
                 <p
