@@ -701,7 +701,7 @@ export default function CheckoutPage() {
 
                     <p className="mt-2">
                       Account Number:{" "}
-                      <strong>03XXXXXXXXX</strong>
+                      <strong>03458388288</strong>
                     </p>
                   </>
                 )}
