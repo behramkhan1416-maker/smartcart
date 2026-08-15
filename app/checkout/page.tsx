@@ -679,7 +679,7 @@ export default function CheckoutPage() {
 
                     <p className="mt-2">
                       Account Title:{" "}
-                      <strong>Umer Farooq</strong>
+                      <strong>smartcart</strong>
                     </p>
 
                     <p className="mt-2">
@@ -696,7 +696,7 @@ export default function CheckoutPage() {
                   <>
                     <p className="mt-4">
                       Account Title:{" "}
-                      <strong>SmartCart</strong>
+                      <strong>Umer Farooq </strong>
                     </p>
 
                     <p className="mt-2">
