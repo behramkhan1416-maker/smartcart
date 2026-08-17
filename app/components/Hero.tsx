@@ -87,21 +87,21 @@ export default function Hero() {
           >
             <div>
               <p className="text-2xl font-black text-white sm:text-3xl">
-                500+
+                100%
               </p>
 
               <p className="mt-1 text-xs text-gray-400 sm:text-sm">
-                Products
+                Authentic
               </p>
             </div>
 
             <div className="border-x border-white/10 px-4 sm:px-8">
               <p className="text-2xl font-black text-white sm:text-3xl">
-                10K+
+                50%
               </p>
 
               <p className="mt-1 text-xs text-gray-400 sm:text-sm">
-                Customers
+                Advance Only
               </p>
             </div>
 

@@ -1,19 +1,19 @@
 export default function CustomerReviews() {
   const reviews = [
     {
-      name: "Ali Khan",
-      review: "Amazing quality and very fast delivery!",
-      rating: "⭐⭐⭐⭐⭐",
+      name: "Fast Delivery",
+      review: "We ship orders quickly with reliable local courier tracking.",
+      rating: "🚚",
     },
     {
-      name: "Sara Ahmed",
-      review: "The products are exactly as shown. Highly recommended!",
-      rating: "⭐⭐⭐⭐⭐",
+      name: "Secure Payment",
+      review: "Pay safely with Easypaisa, JazzCash, SadaPay or Cash on Delivery.",
+      rating: "🔒",
     },
     {
-      name: "Usman Malik",
-      review: "Excellent customer service and secure payment.",
-      rating: "⭐⭐⭐⭐⭐",
+      name: "Real Support",
+      review: "Message us anytime — a real person replies, not a bot.",
+      rating: "💬",
     },
   ];
 
@@ -26,19 +26,19 @@ export default function CustomerReviews() {
         <div className="text-center">
 
           <h2 className="text-2xl font-black text-white sm:text-3xl lg:text-4xl">
-            What Our Customers{" "}
+            Why Shop With{" "}
             <span className="text-yellow-400">
-              Say
+              SmartCart
             </span>
           </h2>
 
           <p className="mt-2 text-xs text-gray-400 sm:text-sm">
-            Real feedback from SmartCart customers.
+            What you can count on when you order.
           </p>
 
         </div>
 
-        {/* 3 reviews in one row on mobile */}
+        {/* 3 highlights in one row on mobile */}
         <div className="mt-6 grid grid-cols-3 gap-2 sm:mt-10 sm:gap-5 lg:gap-8">
 
           {reviews.map((review, index) => (
@@ -68,17 +68,17 @@ export default function CustomerReviews() {
               "
             >
 
-              {/* Rating */}
-              <p className="text-[8px] tracking-[-1px] text-yellow-400 sm:text-sm sm:tracking-normal lg:text-xl">
+              {/* Icon */}
+              <p className="text-[14px] text-yellow-400 sm:text-2xl lg:text-3xl">
                 {review.rating}
               </p>
 
-              {/* Review */}
+              {/* Description */}
               <p className="mt-2 line-clamp-4 text-[9px] leading-3 text-gray-300 sm:mt-4 sm:text-sm sm:leading-6 lg:text-base">
-                &quot;{review.review}&quot;
+                {review.review}
               </p>
 
-              {/* Customer name */}
+              {/* Label */}
               <h3 className="mt-auto pt-2 text-[9px] font-black text-white sm:pt-4 sm:text-base">
                 {review.name}
               </h3>
