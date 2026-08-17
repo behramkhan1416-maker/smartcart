@@ -11,7 +11,6 @@ export default function Fog() {
       <motion.div
         animate={{
           x: [-250, 250, -250],
-          opacity: [0.08, 0.18, 0.08],
           scale: [1, 1.12, 1],
         }}
         transition={{
@@ -27,7 +26,7 @@ export default function Fog() {
         h-[900px]
         rounded-full
         bg-white/5
-        blur-[220px]"
+        blur-[80px]"
       />
 
       {/* Right Fog */}
@@ -35,7 +34,6 @@ export default function Fog() {
       <motion.div
         animate={{
           x: [250, -250, 250],
-          opacity: [0.05, 0.15, 0.05],
           scale: [1, 1.18, 1],
         }}
         transition={{
@@ -51,7 +49,7 @@ export default function Fog() {
         h-[950px]
         rounded-full
         bg-white/5
-        blur-[260px]"
+        blur-[90px]"
       />
 
     </div>
