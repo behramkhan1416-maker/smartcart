@@ -419,7 +419,7 @@ export default function ProductPage({
 
               priority
 
-              unoptimized
+            
 
               onError={(
                 event
@@ -472,8 +472,9 @@ export default function ProductPage({
                       }`}
 
                       fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
 
-                      unoptimized
+                      
 
                       onError={(
                         event
