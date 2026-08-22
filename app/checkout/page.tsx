@@ -255,7 +255,7 @@ export default function CheckoutPage() {
       max-w-none
       rotate-[-4deg]
       object-cover
-      opacity-35
+      opacity-60
       sm:right-[-10%]
       sm:h-[700px]
       sm:w-[1200px]
@@ -263,11 +263,11 @@ export default function CheckoutPage() {
       lg:top-16
       lg:h-[760px]
       lg:w-[1300px]
-      lg:opacity-50
+      lg:opacity-65
     "
   />
 
-  <div className="absolute inset-0 bg-black/60" />
+  <div className="absolute inset-0 bg-black/35" />
 
   <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(234,179,8,0.16),transparent_30%)]" />
 
@@ -278,7 +278,7 @@ export default function CheckoutPage() {
 
           {/* CUSTOMER DETAILS */}
 
-          <section className="rounded-3xl border border-yellow-400/20 bg-gray-900 p-6 sm:p-8">
+          <section className="rounded-3xl border border-white/10 bg-black/35 p-6 shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-8">
 
             <p className="text-sm font-bold uppercase tracking-[0.25em] text-yellow-400">
               SmartCart
@@ -804,7 +804,7 @@ export default function CheckoutPage() {
 
           {/* ORDER SUMMARY */}
 
-          <aside className="h-fit rounded-3xl border border-yellow-400/20 bg-gray-900 p-6 lg:sticky lg:top-8 sm:p-8">
+          <aside className="h-fit rounded-3xl border border-white/10 bg-black/35 p-6 shadow-2xl shadow-black/30 backdrop-blur-xl lg:sticky lg:top-8 sm:p-8">
 
             <h2 className="text-3xl font-black text-yellow-400">
               Order Summary
