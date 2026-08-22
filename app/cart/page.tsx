@@ -119,88 +119,29 @@ export default function CartPage() {
       ========================================================= */}
 
       <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 overflow-hidden"
-      >
-        {/* Gold glow */}
-        <div className="absolute -left-40 top-32 h-[420px] w-[420px] rounded-full bg-yellow-500/10 blur-[130px]" />
-        <div className="absolute right-[-120px] top-24 h-[560px] w-[560px] rounded-full bg-yellow-500/10 blur-[150px]" />
+  aria-hidden="true"
+  className="pointer-events-none absolute inset-0 overflow-hidden"
+>
+  <img
+    src="/cart-bg.png"
+    alt=""
+    className="
+      absolute
+      inset-0
+      h-full
+      w-full
+      object-cover
+      object-center
+      opacity-100
+    "
+  />
 
-        {/* Decorative luxury shopping bag */}
-        <div
-          className="
-            absolute
-            right-[-100px]
-            top-[130px]
-            hidden
-            h-[650px]
-            w-[520px]
-            rounded-[38px]
-            border
-            border-yellow-300/10
-            bg-gradient-to-br
-            from-[#2a2418]
-            via-[#151515]
-            to-[#1f1a10]
-            shadow-[0_0_120px_rgba(234,179,8,0.08)]
-            lg:block
-          "
-        >
-          {/* handles */}
-          <div className="absolute left-1/2 top-[-70px] h-[170px] w-[230px] -translate-x-1/2 rounded-t-[120px] border-[15px] border-b-0 border-yellow-300/20" />
+  <div className="absolute inset-0 bg-black/15" />
 
-          <div className="absolute inset-x-10 top-12 h-px bg-yellow-300/10" />
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_35%,rgba(234,179,8,0.12),transparent_30%)]" />
 
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
-            <ShoppingBag className="mx-auto h-24 w-24 text-yellow-400/15" />
-
-            <p className="mt-6 text-4xl font-black tracking-[0.15em] text-yellow-400/20">
-              SMARTCART
-            </p>
-
-            <p className="mt-2 text-xs uppercase tracking-[0.5em] text-white/10">
-              Premium Experience
-            </p>
-          </div>
-        </div>
-
-        {/* Decorative luxury card */}
-        <div
-          className="
-            absolute
-            bottom-[-65px]
-            right-[8%]
-            hidden
-            h-[220px]
-            w-[390px]
-            rotate-[-14deg]
-            rounded-[28px]
-            border
-            border-yellow-300/15
-            bg-gradient-to-br
-            from-[#2b2b2b]
-            via-[#101010]
-            to-[#141414]
-            shadow-[0_30px_80px_rgba(0,0,0,0.5)]
-            lg:block
-          "
-        >
-          <div className="absolute left-7 top-7 h-9 w-14 rounded-md bg-yellow-300/15" />
-
-          <div className="absolute left-7 top-[95px] text-[10px] tracking-[0.28em] text-white/20">
-            1234 5678 9012 3456
-          </div>
-
-          <p className="absolute bottom-8 left-7 text-xs font-black tracking-[0.28em] text-yellow-300/20">
-            SMARTCART
-          </p>
-        </div>
-
-        {/* ambient fade */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_35%,rgba(234,179,8,0.08),transparent_30%)]" />
-
-        <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/10 to-black/45" />
-      </div>
+  <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/10 to-black/45" />
+</div>
 
       {/* =========================================================
           CONTENT
