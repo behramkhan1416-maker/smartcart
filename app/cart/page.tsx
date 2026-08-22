@@ -139,9 +139,9 @@ export default function CartPage() {
             border
             border-yellow-300/10
             bg-gradient-to-br
-            from-[#171717]
-            via-[#0b0b0b]
-            to-[#171717]
+            from-[#2a2418]
+            via-[#151515]
+            to-[#1f1a10]
             shadow-[0_0_120px_rgba(234,179,8,0.08)]
             lg:block
           "
@@ -199,7 +199,7 @@ export default function CartPage() {
         {/* ambient fade */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_35%,rgba(234,179,8,0.08),transparent_30%)]" />
 
-        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/25 to-black/80" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/10 to-black/45" />
       </div>
 
       {/* =========================================================
@@ -317,7 +317,7 @@ export default function CartPage() {
 
               {/* PRODUCTS */}
 
-              <section className="rounded-[30px] border border-yellow-400/10 bg-black/25 p-4 shadow-2xl backdrop-blur-xl sm:p-6 lg:col-span-2">
+             <section className="rounded-[30px] border border-white/15 bg-black/10 p-4 shadow-2xl backdrop-blur-[3px] sm:p-6 lg:col-span-2">
 
                 <div className="mb-5 flex items-center justify-between">
                   <div>
@@ -472,7 +472,7 @@ export default function CartPage() {
 
               {/* SUMMARY */}
 
-              <aside className="h-fit rounded-[30px] border border-yellow-400/20 bg-black/30 p-5 shadow-2xl backdrop-blur-xl sm:p-7 lg:sticky lg:top-8">
+             <aside className="h-fit rounded-[30px] border border-white/15 bg-black/10 p-5 shadow-2xl backdrop-blur-[3px] sm:p-7 lg:sticky lg:top-8">
 
                 <h2 className="text-2xl font-black sm:text-3xl">
                   Cart Summary
