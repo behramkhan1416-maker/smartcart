@@ -124,7 +124,24 @@ export default function CartPage() {
         <img
           src="/cart-bg.png"
           alt=""
-          className="absolute inset-0 h-full w-full object-cover object-center opacity-100"
+          className="
+  absolute
+  inset-0
+  h-full
+  w-full
+  object-cover
+  object-center
+  opacity-100
+
+  max-sm:inset-x-auto
+  max-sm:left-1/2
+  max-sm:right-auto
+  max-sm:h-full
+  max-sm:w-auto
+  max-sm:max-w-none
+  max-sm:-translate-x-1/2
+  max-sm:object-contain
+"
         />
 
         <div className="absolute inset-0 bg-black/10" />
