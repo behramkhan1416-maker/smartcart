@@ -247,27 +247,38 @@ export default function CheckoutPage() {
     src="/checkout-card-bg.png"
     alt=""
     className="
-      absolute
-      right-[-6%]
-      top-0
-      h-[760px]
-      w-[1350px]
-      max-w-none
-      rotate-[-4deg]
-      object-cover
-      opacity-100
-      sm:right-[-2%]
-      sm:h-[850px]
-      sm:w-[1500px]
-      lg:right-[0%]
-      lg:top-[-20px]
-      lg:h-[950px]
-      lg:w-[1650px]
-    "
+  absolute
+  right-[-6%]
+  top-0
+  h-[760px]
+  w-[1350px]
+  max-w-none
+  rotate-[-4deg]
+  object-contain
+  opacity-100
+
+  max-sm:left-1/2
+  max-sm:right-auto
+  max-sm:top-24
+  max-sm:h-auto
+  max-sm:w-[125vw]
+  max-sm:-translate-x-1/2
+  max-sm:rotate-0
+  max-sm:object-contain
+
+  sm:right-[-2%]
+  sm:h-[850px]
+  sm:w-[1500px]
+
+  lg:right-[0%]
+  lg:top-[-20px]
+  lg:h-[950px]
+  lg:w-[1650px]
+"
   />
 
   {/* Very light readability overlay */}
-  <div className="absolute inset-0 bg-black/5" />
+  <div className="absolute inset-0 bg-black/5 max-sm:bg-black/0" />
 
   {/* Soft luxury glow */}
   <div
