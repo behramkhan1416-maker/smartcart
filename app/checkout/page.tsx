@@ -292,7 +292,7 @@ export default function CheckoutPage() {
        <div className="relative z-10 mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-2">
           {/* CUSTOMER DETAILS */}
 
-          <section className="rounded-3xl border border-white/20 bg-black/5 p-6 shadow-2xl backdrop-blur-sm sm:p-8">
+          <section className="rounded-3xl border border-white/10 bg-transparent p-6 shadow-2xl backdrop-blur-[2px] sm:p-8">
             <p className="text-sm font-bold uppercase tracking-[0.25em] text-yellow-400">
               SmartCart
             </p>
@@ -817,7 +817,7 @@ export default function CheckoutPage() {
 
           {/* ORDER SUMMARY */}
 
-          <aside className="h-fit rounded-3xl border border-white/20 bg-black/5 p-6 shadow-2xl backdrop-blur-sm lg:sticky lg:top-8 sm:p-8">
+          <aside className="h-fit rounded-3xl border border-white/10 bg-transparent p-6 shadow-2xl backdrop-blur-[2px] lg:sticky lg:top-8 sm:p-8">
             <h2 className="text-3xl font-black text-yellow-400">
               Order Summary
             </h2>
