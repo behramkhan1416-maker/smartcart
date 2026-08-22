@@ -237,45 +237,44 @@ export default function CheckoutPage() {
       <Navbar />
 
       <main className="relative min-h-screen overflow-hidden bg-black py-12 text-white sm:py-16">
-        
-        {/* Premium card background */}
-<div
-  aria-hidden="true"
-  className="pointer-events-none absolute inset-0 overflow-hidden"
->
-  <img
-    src="/checkout-card-bg.png"
-    alt=""
-    className="
-      absolute
-      right-[-18%]
-      top-20
-      h-[620px]
-      w-[1100px]
-      max-w-none
-      rotate-[-4deg]
-      object-cover
-      opacity-60
-      sm:right-[-10%]
-      sm:h-[700px]
-      sm:w-[1200px]
-      lg:right-[-6%]
-      lg:top-16
-      lg:h-[760px]
-      lg:w-[1300px]
-      lg:opacity-65
-    "
-  />
 
-  <div className="absolute inset-0 bg-black/35" />
+  {/* Premium card background */}
+  <div
+    aria-hidden="true"
+    className="pointer-events-none absolute inset-0 overflow-hidden"
+  >
+    <img
+      src="/checkout-card-bg.png"
+      alt=""
+      className="
+        absolute
+        right-[-10%]
+        top-10
+        h-[680px]
+        w-[1180px]
+        max-w-none
+        rotate-[-4deg]
+        object-cover
+        opacity-80
+        sm:right-[-4%]
+        sm:h-[780px]
+        sm:w-[1320px]
+        lg:right-[-2%]
+        lg:top-8
+        lg:h-[860px]
+        lg:w-[1450px]
+        lg:opacity-85
+      "
+    />
 
-  <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(234,179,8,0.16),transparent_30%)]" />
+    <div className="absolute inset-0 bg-black/15" />
 
-  <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/65 to-black" />
-</div>
+    <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/25 to-black/70" />
 
-        <div className="relative z-10 mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-2">
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_18%,rgba(255,215,0,0.18),transparent_28%)]" />
+  </div>
 
+       <div className="relative z-10 mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-2">
           {/* CUSTOMER DETAILS */}
 
           <section className="rounded-3xl border border-white/10 bg-black/35 p-6 shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-8">
