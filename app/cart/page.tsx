@@ -113,49 +113,36 @@ export default function CartPage() {
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#050505] px-4 py-8 text-white sm:px-6 sm:py-10 lg:py-14">
-
       {/* =========================================================
           LUXURY BACKGROUND
       ========================================================= */}
 
       <div
-  aria-hidden="true"
-  className="pointer-events-none absolute inset-0 overflow-hidden"
->
-  <img
-    src="/cart-bg.png"
-    alt=""
-    className="
-      absolute
-      inset-0
-      h-full
-      w-full
-      object-cover
-      object-center
-      opacity-100
-    "
-  />
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 overflow-hidden"
+      >
+        <img
+          src="/cart-bg.png"
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover object-center opacity-100"
+        />
 
-  <div className="absolute inset-0 bg-black/15" />
+        <div className="absolute inset-0 bg-black/10" />
 
-  <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_35%,rgba(234,179,8,0.12),transparent_30%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_35%,rgba(234,179,8,0.12),transparent_30%)]" />
 
-  <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/10 to-black/45" />
-</div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/10 to-black/45" />
+      </div>
 
       {/* =========================================================
           CONTENT
       ========================================================= */}
 
       <div className="relative z-10 mx-auto max-w-7xl">
-
-        {/* TOP NAV STYLE STRIP */}
+        {/* TOP NAV */}
 
         <div className="mb-8 flex items-center justify-between border-b border-yellow-400/10 pb-5">
-          <Link
-            href="/"
-            className="flex items-center gap-3"
-          >
+          <Link href="/" className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-yellow-400/20 bg-yellow-400/10">
               <ShoppingBag className="h-5 w-5 text-yellow-400" />
             </div>
@@ -175,16 +162,22 @@ export default function CartPage() {
             <Link href="/" className="transition hover:text-yellow-400">
               Home
             </Link>
+
             <Link href="/shop" className="transition hover:text-yellow-400">
               Shop
             </Link>
+
             <Link
               href="/categories"
               className="transition hover:text-yellow-400"
             >
               Categories
             </Link>
-            <Link href="/wishlist" className="transition hover:text-yellow-400">
+
+            <Link
+              href="/wishlist"
+              className="transition hover:text-yellow-400"
+            >
               Wishlist
             </Link>
 
@@ -196,9 +189,7 @@ export default function CartPage() {
           </div>
         </div>
 
-        {/* =======================================================
-            HEADER
-        ======================================================= */}
+        {/* HEADER */}
 
         <div className="mb-8">
           <p className="text-sm font-bold uppercase tracking-[0.3em] text-gray-400">
@@ -220,12 +211,10 @@ export default function CartPage() {
           </p>
         </div>
 
-        {/* =======================================================
-            EMPTY CART
-        ======================================================= */}
+        {/* EMPTY CART */}
 
         {cartItems.length === 0 ? (
-          <section className="rounded-[30px] border border-white/10 bg-black/30 p-10 text-center shadow-2xl backdrop-blur-xl sm:p-16">
+          <section className="rounded-[30px] border border-white/10 bg-black/15 p-10 text-center shadow-2xl backdrop-blur-xl sm:p-16">
             <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full border border-yellow-400/20 bg-yellow-400/10">
               <ShoppingBag className="h-10 w-10 text-yellow-400" />
             </div>
@@ -249,17 +238,23 @@ export default function CartPage() {
           </section>
         ) : (
           <>
-
-            {/* =================================================
-                MAIN CART + SUMMARY
-            ================================================= */}
+            {/* MAIN CART + SUMMARY */}
 
             <div className="grid gap-7 lg:grid-cols-3">
-
               {/* PRODUCTS */}
 
-             <section className="rounded-[30px] border border-white/15 bg-black/10 p-4 shadow-2xl backdrop-blur-[3px] sm:p-6 lg:col-span-2">
-
+              <section
+                className="
+                  rounded-[30px]
+                  border border-white/15
+                  bg-black/10
+                  p-4
+                  shadow-2xl
+                  backdrop-blur-[3px]
+                  sm:p-6
+                  lg:col-span-2
+                "
+              >
                 <div className="mb-5 flex items-center justify-between">
                   <div>
                     <h2 className="text-2xl font-black">
@@ -282,28 +277,25 @@ export default function CartPage() {
                 </div>
 
                 <div className="space-y-3">
-
                   {cartItems.map((item, index) => (
                     <article
                       key={`${item.product.id}-${index}`}
                       className="
                         group
                         rounded-2xl
-                        border
-                        border-white/10
-                        bg-white/[0.035]
+                        border border-white/10
+                        bg-black/35
                         p-3
                         transition
                         hover:border-yellow-400/20
-                        hover:bg-white/[0.055]
+                        hover:bg-black/45
                         sm:p-4
                       "
                     >
                       <div className="grid gap-4 sm:grid-cols-[110px_1fr_auto] sm:items-center">
-
                         {/* IMAGE */}
 
-                        <div className="flex h-28 items-center justify-center overflow-hidden rounded-2xl bg-white sm:h-24 sm:w-[110px]">
+                        <div className="flex h-28 items-center justify-center overflow-hidden rounded-2xl bg-white/95 sm:h-24 sm:w-[110px]">
                           <Image
                             src={item.product.image}
                             alt={item.product.name}
@@ -341,7 +333,6 @@ export default function CartPage() {
                         {/* QUANTITY + TOTAL */}
 
                         <div className="flex items-center justify-between gap-4 sm:flex-col sm:items-end">
-
                           <div className="flex items-center rounded-xl border border-white/10 bg-black/30 p-1">
                             <button
                               type="button"
@@ -395,11 +386,9 @@ export default function CartPage() {
                             </button>
                           </div>
                         </div>
-
                       </div>
                     </article>
                   ))}
-
                 </div>
 
                 <Link
@@ -413,14 +402,25 @@ export default function CartPage() {
 
               {/* SUMMARY */}
 
-             <aside className="h-fit rounded-[30px] border border-white/15 bg-black/10 p-5 shadow-2xl backdrop-blur-[3px] sm:p-7 lg:sticky lg:top-8">
-
+              <aside
+                className="
+                  h-fit
+                  rounded-[30px]
+                  border border-white/15
+                  bg-black/10
+                  p-5
+                  shadow-2xl
+                  backdrop-blur-[3px]
+                  sm:p-7
+                  lg:sticky
+                  lg:top-8
+                "
+              >
                 <h2 className="text-2xl font-black sm:text-3xl">
                   Cart Summary
                 </h2>
 
                 <div className="mt-6 space-y-4">
-
                   <div className="flex justify-between text-sm text-gray-400">
                     <span>
                       Subtotal ({totalItems} items)
@@ -452,7 +452,6 @@ export default function CartPage() {
                   </div>
 
                   <div className="border-t border-white/10 pt-5">
-
                     <div className="flex items-center justify-between gap-4">
                       <span className="text-lg font-bold">
                         Total Amount
@@ -463,9 +462,7 @@ export default function CartPage() {
                         {total.toLocaleString()}
                       </span>
                     </div>
-
                   </div>
-
                 </div>
 
                 {/* DELIVERY MESSAGE */}
@@ -491,7 +488,27 @@ export default function CartPage() {
 
                 <Link
                   href="/checkout"
-                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-yellow-400 px-6 py-4 text-base font-black text-black shadow-[0_12px_40px_rgba(234,179,8,0.15)] transition hover:bg-yellow-300 sm:text-lg"
+                  className="
+                    mt-6
+                    flex
+                    w-full
+                    items-center
+                    justify-center
+                    gap-2
+                    rounded-2xl
+                    border border-yellow-300/40
+                    bg-yellow-400/90
+                    px-6
+                    py-4
+                    text-base
+                    font-black
+                    text-black
+                    shadow-[0_12px_40px_rgba(234,179,8,0.18)]
+                    backdrop-blur-md
+                    transition
+                    hover:bg-yellow-300
+                    sm:text-lg
+                  "
                 >
                   Proceed to Checkout
                   <ArrowRight className="h-5 w-5" />
@@ -501,21 +518,35 @@ export default function CartPage() {
 
                 <button
                   type="button"
-                  className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border border-yellow-400/20 bg-yellow-400/5 px-6 py-4 font-black text-yellow-400 transition hover:bg-yellow-400 hover:text-black"
+                  className="
+                    mt-3
+                    flex
+                    w-full
+                    items-center
+                    justify-center
+                    gap-2
+                    rounded-2xl
+                    border border-white/15
+                    bg-white/5
+                    px-6
+                    py-4
+                    font-black
+                    text-yellow-400
+                    backdrop-blur-md
+                    transition
+                    hover:border-yellow-400/40
+                    hover:bg-yellow-400/10
+                  "
                 >
                   <Tag className="h-4 w-4" />
                   Apply Coupon
                 </button>
-
               </aside>
             </div>
 
-            {/* =================================================
-                TRUST STRIP
-            ================================================= */}
+            {/* TRUST STRIP */}
 
-            <section className="mt-7 grid gap-3 rounded-[28px] border border-white/10 bg-black/25 p-4 shadow-2xl backdrop-blur-xl sm:grid-cols-2 lg:grid-cols-4">
-
+            <section className="mt-7 grid gap-3 rounded-[28px] border border-white/10 bg-black/10 p-4 shadow-2xl backdrop-blur-xl sm:grid-cols-2 lg:grid-cols-4">
               <div className="rounded-2xl border border-white/5 bg-white/[0.03] p-4">
                 <ShieldCheck className="h-6 w-6 text-yellow-400" />
 
