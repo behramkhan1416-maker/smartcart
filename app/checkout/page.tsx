@@ -239,46 +239,60 @@ export default function CheckoutPage() {
       <main className="relative min-h-screen overflow-hidden bg-black py-12 text-white sm:py-16">
 
   {/* Premium card background */}
+<div
+  aria-hidden="true"
+  className="pointer-events-none absolute inset-0 overflow-hidden"
+>
+  <img
+    src="/checkout-card-bg.png"
+    alt=""
+    className="
+      absolute
+      right-[-6%]
+      top-0
+      h-[760px]
+      w-[1350px]
+      max-w-none
+      rotate-[-4deg]
+      object-cover
+      opacity-100
+      sm:right-[-2%]
+      sm:h-[850px]
+      sm:w-[1500px]
+      lg:right-[0%]
+      lg:top-[-20px]
+      lg:h-[950px]
+      lg:w-[1650px]
+    "
+  />
+
+  {/* Very light readability overlay */}
+  <div className="absolute inset-0 bg-black/5" />
+
+  {/* Soft luxury glow */}
   <div
-    aria-hidden="true"
-    className="pointer-events-none absolute inset-0 overflow-hidden"
-  >
-    <img
-      src="/checkout-card-bg.png"
-      alt=""
-      className="
-        absolute
-        right-[-10%]
-        top-10
-        h-[680px]
-        w-[1180px]
-        max-w-none
-        rotate-[-4deg]
-        object-cover
-        opacity-80
-        sm:right-[-4%]
-        sm:h-[780px]
-        sm:w-[1320px]
-        lg:right-[-2%]
-        lg:top-8
-        lg:h-[860px]
-        lg:w-[1450px]
-        lg:opacity-85
-      "
-    />
+    className="
+      absolute inset-0
+      bg-[radial-gradient(circle_at_70%_20%,rgba(255,215,0,0.22),transparent_32%)]
+    "
+  />
 
-    <div className="absolute inset-0 bg-black/15" />
-
-    <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/25 to-black/70" />
-
-    <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_18%,rgba(255,215,0,0.18),transparent_28%)]" />
-  </div>
+  {/* Gentle bottom fade only */}
+  <div
+    className="
+      absolute inset-0
+      bg-gradient-to-b
+      from-transparent
+      via-transparent
+      to-black/45
+    "
+  />
+</div>
 
        <div className="relative z-10 mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-2">
           {/* CUSTOMER DETAILS */}
 
-          <section className="rounded-3xl border border-white/10 bg-black/35 p-6 shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-8">
-
+          <section className="rounded-3xl border border-white/15 bg-black/15 p-6 shadow-2xl backdrop-blur-md sm:p-8">
             <p className="text-sm font-bold uppercase tracking-[0.25em] text-yellow-400">
               SmartCart
             </p>
@@ -803,7 +817,7 @@ export default function CheckoutPage() {
 
           {/* ORDER SUMMARY */}
 
-          <aside className="h-fit rounded-3xl border border-white/10 bg-black/35 p-6 shadow-2xl shadow-black/30 backdrop-blur-xl lg:sticky lg:top-8 sm:p-8">
+          <aside className="h-fit rounded-3xl border border-white/15 bg-black/15 p-6 shadow-2xl backdrop-blur-md lg:sticky lg:top-8 sm:p-8">
 
             <h2 className="text-3xl font-black text-yellow-400">
               Order Summary
